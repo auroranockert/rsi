@@ -11,15 +11,30 @@ module RSI
     end
 
     def to_rust_result
-      "foreign_result"
+      case @result.pass_by
+      when 'owned'
+        "std::cast::transmute(foreign_result)"
+      else
+        "foreign_result"
+      end
     end
 
     def to_rust_result_type
-      "#{self.result.type}"
+      case @result.pass_by
+      when 'owned'
+        "~#{self.result.type}"
+      else
+        "#{self.result.type}"
+      end
     end
 
     def to_c_result_type
-      "#{self.result.type}"
+      case @result.pass_by
+      when 'owned'
+        "*#{self.result.type}"
+      else
+        "#{self.result.type}"
+      end
     end
 
     def to_postparation_code(indent)

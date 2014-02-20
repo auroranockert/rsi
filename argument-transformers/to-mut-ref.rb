@@ -28,12 +28,7 @@ module RSI::ArgumentTransformer
     end
 
     def to_preparation_code(indent)
-      case self.argument.pass_by
-      when 'value'
-        RSI.indent("let mut #{self.argument.name} = #{self.argument.name}_r;", indent)
-      else
-        raise "Unknown pass_by #{self.argument.pass_by}"
-      end
+      RSI.indent("let mut #{self.argument.name} = #{self.argument.name}_r;", indent)
     end
   end
 end

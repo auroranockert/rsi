@@ -26,15 +26,19 @@ module RSI
     array_node :fields, 'field', class: RSI::StructField, default_value: []
 
     def to_code(indent)
-      a = RSI.indent("pub struct #{self.name} {", indent)
-      b = if self.opaque
-        RSI.indent("opaque: *mut std::libc::c_void", indent + 1)
-      else
-        RSI.indent(self.fields.map(&:to_code).join(",\n"), indent + 1)
-      end
-      c = RSI.indent("}", indent)
+      if self.opaque
+        a = RSI.indent("pub struct #{self.name} {", indent)
+        b = RSI.indent("opaque: *std::libc::c_void", indent + 1)
+        c = RSI.indent("}", indent)
 
-      a + b + c
+        a + b + c
+      else
+        a = RSI.indent("pub struct #{self.name} {", indent)
+        b = RSI.indent(self.fields.map(&:to_code).join(",\n"), indent + 1)
+        c = RSI.indent("}", indent)
+
+        a + b + c
+      end
     end
   end
 end

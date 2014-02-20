@@ -19,7 +19,7 @@ module RSI
       libs = self.libraries.map { |c| c.to_code(0) }.join("\n")
       enums = self.enums.map { |c| c.to_code(0) }.join("\n")
       structs = self.structs.map { |c| c.to_code(0) }.join("\n")
-      implementations = self.structs.map { |c| c.to_code(0) }.join("\n")
+      implementations = self.implementations.map { |c| c.to_code(0) }.join("\n")
       modules = self.modules.map { |c| c.to_code(0) }.join("\n")
 
       contents = []
@@ -31,7 +31,7 @@ module RSI
       contents.push(implementations) if implementations != ''
       contents.push(modules) if modules != ''
 
-      contents.join("\n")
+      RSI.indent('use std;', 0) + "\n" + contents.join("\n")
     end
   end
 end

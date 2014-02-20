@@ -1,6 +1,77 @@
 <crate name='cairo'>
   <library name='cairo'/>
 
+  <struct name='Cairo' opaque='true'/>
+
+  <!-- TODO: A lot… -->
+
+  <implementation for='Cairo'>
+    <method name='new' foreign='cairo_create'>
+      <argument name='surface' type='{surface::Surface}' pass_by='mut-ref' transformer='opaque'/>
+      <result type='{Cairo}'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+
+    <method name='set_source_rgb' foreign='cairo_set_source_rgb'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='red' type='double'/>
+      <argument name='green' type='double'/>
+      <argument name='blue' type='double'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+
+    <method name='set_line_width' foreign='cairo_set_line_width'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='width' type='double'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+
+    <method name='fill' foreign='cairo_fill'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+
+    <method name='paint' foreign='cairo_paint'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+
+    <method name='stroke' foreign='cairo_stroke'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+
+    <!-- Paths -->
+
+    <!-- TODO: A lot… -->
+
+    <method name='line_to' foreign='cairo_line_to'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double'/>
+      <argument name='y' type='double'/>
+    </method>
+
+    <method name='move_to' foreign='cairo_move_to'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double'/>
+      <argument name='y' type='double'/>
+    </method>
+
+    <!-- TODO: A lot… -->
+  </implementation>
+
+  <implementation trait='std::ops::Drop' for='Cairo'>
+    <method name='drop' foreign='cairo_destroy'>
+      <argument type='{Cairo}' pass_by='mut-self'/>
+    </method>
+  </implementation>
+
   <!-- TODO: A lot… -->
 
   <module name='surface'>
@@ -12,6 +83,17 @@
     <struct name='Surface' opaque='true'/>
 
     <implementation for='Surface'>
+      <!-- TODO: cairo_surface_status -->
+      <method name='finish' foreign='cairo_surface_finish'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <method name='flush' foreign='cairo_surface_flush'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <!-- TODO: A lot… -->
+
       <!-- SVG Surface -->
       <method name='svg' foreign='cairo_svg_surface_create'>
         <argument name='filename' type='string' pass_by='ref' transformer='cstring'/>
@@ -37,7 +119,7 @@
 
     <implementation trait='std::ops::Drop' for='Surface'>
       <method name='drop' foreign='cairo_surface_destroy'>
-        <argument type='{Surface}' pass_by='mut-self'/>
+        <argument type='{Surface}' pass_by='mut-self' transform='forget'/>
       </method>
     </implementation>
   </module>

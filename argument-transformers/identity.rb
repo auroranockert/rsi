@@ -54,12 +54,7 @@ module RSI::ArgumentTransformer
     end
 
     def to_preparation_code(indent)
-      case self.argument.pass_by
-      when 'value', 'ref', 'mut-ref', 'self', 'mut-self'
-        nil
-      else
-        raise "Unknown pass_by #{self.argument.pass_by}"
-      end
+      nil
     end
   end
 end

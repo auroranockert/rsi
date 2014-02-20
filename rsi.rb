@@ -35,6 +35,8 @@ module RSI
       RSI::ArgumentTransformer::Identity.new(arg)
     when 'zero'
       RSI::ArgumentTransformer::Zero.new(arg)
+    when 'opaque'
+      RSI::ArgumentTransformer::Opaque.new(arg)
     when 'to-mut-ref'
       RSI::ArgumentTransformer::ToMutRef.new(arg)
     when 'from-mut-ref'
@@ -153,6 +155,7 @@ end
 $:.unshift(File.dirname(__FILE__))
 
 require 'argument-transformers/zero'
+require 'argument-transformers/opaque'
 require 'argument-transformers/cstring'
 require 'argument-transformers/identity'
 require 'argument-transformers/to-mut-ref'
