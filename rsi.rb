@@ -12,11 +12,15 @@ module RSI
 
   def self.type_from_string(type)
     case type
+    when /\?\z/
+      RSI::OptionType.new(RSI.type_from_string(type[0 .. -2]))
     when 'f32', 'single', 'float'
       RSI::FloatType.new(32)
     when 'f64', 'double'
       RSI::FloatType.new(64)
-    when /\A{([\w]+)}\z/
+    when 'string'
+      RSI::String.new
+    when /\A{([\w:]+)}\z/
       RSI::StructType.new($1)
     when /\A\[([\w]+)\]\z/
       RSI::EnumType.new($1)
@@ -28,13 +32,15 @@ module RSI
   def self.argument_transformer_from_name(transformer, arg)
     case transformer
     when 'identity'
-      RSI::IdentityTransformer.new(arg)
+      RSI::ArgumentTransformer::Identity.new(arg)
     when 'zero'
-      RSI::ZeroTransformer.new(arg)
+      RSI::ArgumentTransformer::Zero.new(arg)
     when 'to-mut-ref'
-      RSI::ToMutRefTransformer.new(arg)
+      RSI::ArgumentTransformer::ToMutRef.new(arg)
     when 'from-mut-ref'
-      RSI::FromMutRefTransformer.new(arg)
+      RSI::ArgumentTransformer::FromMutRef.new(arg)
+    when 'cstring'
+      RSI::ArgumentTransformer::CString.new(arg)
     else
       raise "Unknown transformer… #{transformer}"
     end
@@ -42,12 +48,26 @@ module RSI
 
   def self.result_transformer_from_name(transformer, arg)
     case transformer
-    when 'foreign'
-      RSI::ForeignTransformer.new(arg)
     when 'out'
       RSI::OutTransformer.new(arg)
+    when 'cstring'
+      RSI::CStringTransformer.new(arg)
+    when 'foreign'
+      RSI::ForeignTransformer.new(arg)
     else
       raise "Unknown transformer… #{transformer}"
+    end
+  end
+
+  class OptionType
+    def initialize(type)
+      @type = type
+    end
+
+    attr_reader :type
+
+    def to_s
+      "Option<#{@type}>"
     end
   end
 
@@ -72,6 +92,18 @@ module RSI
 
     def to_s
       @name
+    end
+  end
+
+  class String
+    def to_s
+      'str'
+    end
+  end
+  
+  class CString
+    def to_s
+      'std::c_str::CString'
     end
   end
 
@@ -121,10 +153,12 @@ end
 $:.unshift(File.dirname(__FILE__))
 
 require 'argument-transformers/zero'
+require 'argument-transformers/cstring'
 require 'argument-transformers/identity'
 require 'argument-transformers/to-mut-ref'
 
 require 'result-transformers/out'
+require 'result-transformers/cstring'
 require 'result-transformers/foreign'
 
 require 'nodes/enum'

@@ -1,5 +1,5 @@
-module RSI
-  class IdentityTransformer
+module RSI::ArgumentTransformer
+  class Identity
     attr_reader :argument
 
     def initialize(argument)
@@ -47,6 +47,10 @@ module RSI
       else
         "#{self.argument.name}"
       end
+    end
+
+    def uses(indent)
+      nil
     end
 
     def to_preparation_code(indent)

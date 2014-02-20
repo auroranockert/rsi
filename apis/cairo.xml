@@ -3,6 +3,45 @@
 
   <!-- TODO: A lot… -->
 
+  <module name='surface'>
+    <enum name='SVGVersion'>
+      <value name='SVGVersion_1_1' value='0' />
+      <value name='SVGVersion_1_2' value='1' />
+    </enum>
+
+    <struct name='Surface' opaque='true'/>
+
+    <implementation for='Surface'>
+      <!-- SVG Surface -->
+      <method name='svg' foreign='cairo_svg_surface_create'>
+        <argument name='filename' type='string' pass_by='ref' transformer='cstring'/>
+        <argument name='width' type='double'/>
+        <argument name='height' type='double'/>
+        <result type='{Surface}'/>
+      </method>
+
+      <!-- TODO: cairo_svg_surface_create_for_stream -->
+
+      <method name='restrict_to_svg_version' foreign='cairo_svg_surface_restrict_to_version'>
+        <argument type='{Surface}' pass_by='mut-self'/>
+        <argument name='version' type='[SVGVersion]'/>
+      </method>
+
+      <!-- TODO: cairo_svg_get_versions -->
+
+      <method name='svg_version_to_string' foreign='cairo_svg_version_to_string'>
+        <argument name='version' type='[SVGVersion]'/>
+        <result type='{std::c_str::CString}' transformer='cstring'/>
+      </method>
+    </implementation>
+
+    <implementation trait='std::ops::Drop' for='Surface'>
+      <method name='drop' foreign='cairo_surface_destroy'>
+        <argument type='{Surface}' pass_by='mut-self'/>
+      </method>
+    </implementation>
+  </module>
+
   <!-- Wraps cairo_matrix_t -->
   <module name='matrix'>
     <enum name='InvertStatus'>
@@ -87,7 +126,7 @@
       </method>
       <method name='invert' foreign='cairo_matrix_invert'>
         <argument type='{Matrix}' pass_by='self'/>
-        <result name='[InvertStatus]' type='double'/>
+        <result type='[InvertStatus]'/>
       </method>
     </implementation>
   </module>

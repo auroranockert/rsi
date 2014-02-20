@@ -1,5 +1,5 @@
-module RSI
-  class ZeroTransformer
+module RSI::ArgumentTransformer
+  class Zero
     attr_reader :argument
 
     def initialize(argument)
@@ -21,6 +21,10 @@ module RSI
 
     def to_c_call_argument
       "&mut #{self.argument.name}"
+    end
+
+    def uses(indent)
+      nil
     end
 
     def to_preparation_code(indent)

@@ -31,6 +31,10 @@ module RSI
       self.transformer.to_c_call_argument
     end
 
+    def uses(indent)
+      self.transformer.uses(indent)
+    end
+
     def to_preparation_code(indent)
       self.transformer.to_preparation_code(indent)
     end
@@ -92,7 +96,7 @@ module RSI
     array_node :arguments, 'argument', class: RSI::Argument, default_value: []
     array_node :results, 'result', class: RSI::Result, default_value: []
 
-    def to_code(indent)
+    def to_code(trait, indent)
       prototype_args = self.arguments.map(&:to_rust_argument).select { |a| a }.join(', ')
       prototype_result = case self.results.length
       when 0
@@ -103,17 +107,18 @@ module RSI
         " -> (#{self.results.map(&:to_rust_result_type).join(', ')})"
       end
 
-      a = RSI.indent("pub fn #{self.name}(#{prototype_args})#{prototype_result} {", indent)
+      a = RSI.indent("#{trait ? '' : 'pub '}fn #{self.name}(#{prototype_args})#{prototype_result} {", indent)
       b = RSI.indent('unsafe {', indent + 1)
 
-      c = self.arguments.map { |a| a.to_preparation_code(indent + 2) }.select { |a| a }.join('')
+      c = self.arguments.map { |a| a.uses(indent + 2) }.select { |a| a }.join('')
+      d = self.arguments.map { |a| a.to_preparation_code(indent + 2) }.select { |a| a }.join('')
 
-      d = "#{self.foreign}(#{self.arguments.map(&:to_c_call_argument).select { |a| a }.join(', ')});"
-      d = RSI.indent((self.results.any? { |r| r.needs_foreign_result } ? 'let foreign_result = ' : '') + d, indent + 2)
+      e = "#{self.foreign}(#{self.arguments.map(&:to_c_call_argument).select { |a| a }.join(', ')});"
+      e = RSI.indent((self.results.any? { |r| r.needs_foreign_result } ? 'let foreign_result = ' : '') + e, indent + 2)
 
-      e = self.results.map { |r| r.to_postparation_code(indent + 2) }.select { |r| r }.join('')
+      f = self.results.map { |r| r.to_postparation_code(indent + 2) }.select { |r| r }.join('')
 
-      f = case self.results.length
+      g = case self.results.length
       when 0
         ''
       when 1
@@ -122,10 +127,10 @@ module RSI
         RSI.indent("return (#{self.results.map(&:to_rust_result).join(', ')});", indent + 2)
       end
       
-      g = RSI.indent("}", indent + 1)
-      h = RSI.indent("}", indent)
+      h = RSI.indent("}", indent + 1)
+      i = RSI.indent("}", indent)
 
-      a + b + c + d + e + f + g + h
+      a + b + c + d + e + f + g + h + i
     end
 
     def to_extern(indent)
@@ -154,7 +159,7 @@ module RSI
 
     def to_code(indent)
       a = RSI.indent(self.trait ? "impl #{self.trait} for #{self.for} {" : "impl #{self.for} {", indent)
-      b = self.methods.map { |m| m.to_code(indent + 1) }.join("\n")
+      b = self.methods.map { |m| m.to_code(self.trait, indent + 1) }.join("\n")
       c = RSI.indent("}", indent)
       d = "\n"
       e = RSI.indent("extern {", indent)

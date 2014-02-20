@@ -15,18 +15,16 @@ module RSI
   
     def to_code(indent)
       uses = '' # self.uses.map { |c| c.to_code(1) }.join('')
-      enums = self.enums.map { |c| c.to_code(indent + 1) }.join('')
-      structs = self.structs.map { |c| c.to_code(indent + 1) }.join('')
-      opaques = '' # = self.opaques.map { |c| c.to_code(1) }.join('')
-      implementations = self.implementations.map { |c| c.to_code(indent + 1) }.join('')
-      modules = self.modules.map { |c| c.to_code(indent + 1) }.join('')
+      enums = self.enums.map { |c| c.to_code(indent + 1) }.join("\n")
+      structs = self.structs.map { |c| c.to_code(indent + 1) }.join("\n")
+      implementations = self.implementations.map { |c| c.to_code(indent + 1) }.join("\n")
+      modules = self.modules.map { |c| c.to_code(indent + 1) }.join("\n")
 
       contents = []
 
       contents.push(uses) if uses != ''
       contents.push(enums) if enums != ''
       contents.push(structs) if structs != ''
-      contents.push(opaques) if opaques != ''
       contents.push(implementations) if implementations != ''
       contents.push(modules) if modules != ''
 

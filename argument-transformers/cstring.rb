@@ -1,5 +1,5 @@
 module RSI::ArgumentTransformer
-  class ToMutRef
+  class CString
     attr_reader :argument
 
     def initialize(argument)
@@ -8,29 +8,34 @@ module RSI::ArgumentTransformer
 
     def to_rust_argument
       case self.argument.pass_by
-      when 'value'
-        "#{self.argument.name}_r: #{self.argument.type}"
+      when 'ref'
+        "#{self.argument.name}: &#{self.argument.type}"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
     end
 
     def to_c_argument
-      "#{self.argument.name}: &mut #{self.argument.type}"
+      case self.argument.pass_by
+      when 'ref'
+        "#{self.argument.name}: std::c_str::CString"
+      else
+        raise "Unknown pass_by #{self.argument.pass_by}"
+      end
     end
 
     def to_c_call_argument
-      "&mut #{self.argument.name}"
+      "#{self.argument.name}.to_c_str()"
     end
 
     def uses(indent)
-      nil
+      RSI.indent("use std::c_str::ToCStr;", indent)
     end
 
     def to_preparation_code(indent)
       case self.argument.pass_by
-      when 'value'
-        RSI.indent("let mut #{self.argument.name} = #{self.argument.name}_r;", indent)
+      when 'ref'
+        nil
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
