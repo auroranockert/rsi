@@ -6,11 +6,44 @@
   <enum name='Status'>
     <value name='Success' value='0'/>
     <value name='NoMemory' value='1'/>
+    <value name='InvalidRestore' value='2'/>
+    <value name='InvalidPopGroup' value='3'/>
+    <value name='NoCurrentPoint' value='4'/>
     <value name='InvalidMatrix' value='5'/>
+    <value name='InvalidStatus' value='6'/>
+    <value name='NullPointer' value='7'/>
+    <value name='InvalidString' value='8'/>
+    <value name='InvalidPathData' value='9'/>
+    <value name='ReadError' value='10'/>
+    <value name='WriteError' value='11'/>
+    <value name='SurfaceFinished' value='12'/>
     <value name='TypeMismatch' value='13'/>
+    <value name='SurfaceTypeMismatch' value='14'/>
+    <value name='PatternTypeMismatch' value='15'/>
+    <value name='InvalidContent' value='16'/>
+    <value name='InvalidFormat' value='17'/>
+    <value name='InvalidVisual' value='18'/>
+    <value name='FileNotFound' value='19'/>
+    <value name='InvalidDash' value='20'/>
+    <value name='InvalidDSCComment' value='21'/>
+    <value name='InvalidIndex' value='22'/>
+    <value name='ClipNotRepresentable' value='23'/>
+    <value name='TempFileError' value='24'/>
+    <value name='InvalidStride' value='25'/>
+    <value name='FontTypeMismatch' value='26'/>
+    <value name='UserFontImmutable' value='27'/>
+    <value name='UserFontError' value='28'/>
+    <value name='NegativeCount' value='29'/>
+    <value name='InvalidClusters' value='30'/>
+    <value name='InvalidSlant' value='31'/>
+    <value name='InvalidWeight' value='32'/>
+    <value name='InvalidSize' value='33'/>
+    <value name='UserFontNotImplemented' value='34'/>
+    <value name='DeviceTypeMismatch' value='35'/>
+    <value name='DeviceError' value='36'/>
+    <value name='InvalidMeshConstruction' value='37'/>
+    <value name='DeviceFinished' value='38'/>
   </enum>
-
-  <!-- TODO: A lot… -->
 
   <implementation for='Cairo'>
     <method name='new' foreign='cairo_create'>
@@ -83,7 +116,40 @@
       <result type='double'/>
     </method>
 
-    <!-- TODO: A lot… -->
+    <method name='set_operator' foreign='cairo_set_operator'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='operator' type='[operator::Operator]'/>
+    </method>
+
+    <method name='get_operator' foreign='cairo_get_operator'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[operator::Operator]'/>
+    </method>
+
+    <method name='set_tolerance' foreign='cairo_set_tolerance'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='tolerance' type='double'/>
+    </method>
+
+    <method name='get_tolerance' foreign='cairo_get_tolerance'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='double'/>
+    </method>
+
+    <method name='clip' foreign='cairo_clip'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <method name='clip_preserve' foreign='cairo_clip_preserve'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <!-- cairo_clip_extents -->
+    <!-- cairo_in_clip -->
+
+    <method name='reset_clip' foreign='cairo_reset_clip'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
 
     <method name='fill' foreign='cairo_fill'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -265,11 +331,56 @@
     <!-- cairo_device_to_user_distance -->
   </implementation>
 
+  <implementation trait='std::clone::Clone' for='Cairo'>
+    <method name='clone' foreign='cairo_reference'>
+      <argument type='{Cairo}' pass_by='self' transformer='opaque'/>
+      <result type='{Cairo}'/>
+    </method>
+  </implementation>
+
   <implementation trait='std::ops::Drop' for='Cairo'>
     <method name='drop' foreign='cairo_destroy'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
   </implementation>
+
+  <module name='operator'>
+    <enum name='Operator'>
+      <value name='Clear' value='0'/>
+
+      <value name='Source' value='1'/>
+      <value name='Over' value='2'/>
+      <value name='In' value='3'/>
+      <value name='Out' value='4'/>
+      <value name='Atop' value='5'/>
+
+      <value name='Dest' value='6'/>
+      <value name='DestOver' value='7'/>
+      <value name='DestIn' value='8'/>
+      <value name='DestOut' value='9'/>
+      <value name='DestAtop' value='10'/>
+
+      <value name='Xor' value='11'/>
+      <value name='Add' value='12'/>
+      <value name='Saturate' value='13'/>
+
+      <value name='Multiply' value='14'/>
+      <value name='Screen' value='15'/>
+      <value name='Overlay' value='16'/>
+      <value name='Darken' value='17'/>
+      <value name='Lighten' value='18'/>
+      <value name='ColorDodge' value='19'/>
+      <value name='ColorBurn' value='20'/>
+      <value name='HardLight' value='21'/>
+      <value name='SoftLight' value='22'/>
+      <value name='Difference' value='23'/>
+      <value name='Exclusion' value='24'/>
+      <value name='HSLHue' value='25'/>
+      <value name='HSLSaturation' value='26'/>
+      <value name='HSLColor' value='27'/>
+      <value name='HSLLuminosity' value='28'/>
+    </enum>
+  </module>
 
   <!-- TODO: A lot… -->
 
@@ -280,19 +391,107 @@
     </enum>
 
     <struct name='Surface' opaque='true'/>
+    <struct name='Device' opaque='true'/>
 
-    <enum name='Format'>
-      <value name='Invalid' value='-1'/>
-      <value name='ARGB32' value='0'/>
-      <value name='RGB24' value='1'/>
-      <value name='A8' value='2'/>
-      <value name='A1' value='3'/>
-      <value name='RGB16_565' value='4'/>
-      <value name='RGB30' value='5'/>
-    </enum>
+    <module name='device_type'>
+      <enum name='DeviceType'>
+        <value name='Invalid' value='-1'/>
+        <value name='DRM' value='0'/>
+        <value name='GL' value='1'/>
+        <value name='Script' value='2'/>
+        <value name='XCB' value='3'/>
+        <value name='XLIB' value='4'/>
+        <value name='XML' value='5'/>
+        <value name='COGL' value='6'/>
+        <value name='Win32' value='7'/>
+      </enum>
+    </module>
+
+    <module name='format'>
+      <enum name='Format'>
+        <value name='Invalid' value='-1'/>
+        <value name='ARGB32' value='0'/>
+        <value name='RGB24' value='1'/>
+        <value name='A8' value='2'/>
+        <value name='A1' value='3'/>
+        <value name='RGB16_565' value='4'/>
+        <value name='RGB30' value='5'/>
+      </enum>
+    </module>
+
+    <implementation for='Device'>
+      <method name='status' foreign='cairo_device_status'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+        <result type='[super::Status]'/>
+      </method>
+
+      <method name='finish' foreign='cairo_device_finish'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <method name='flush' foreign='cairo_device_flush'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <method name='get_type' foreign='cairo_device_get_type'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+        <result type='[device_type::DeviceType]'/>
+      </method>
+
+      <method name='reference_type' foreign='cairo_device_get_reference_count'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+        <result type='unsigned int'/>
+      </method>
+
+      <!-- cairo_device_set_user_data -->
+      <!-- cairo_device_get_user_data -->
+
+      <method name='acquire' foreign='cairo_device_acquire'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+        <result type='[super::Status]'/>
+      </method>
+
+      <method name='release' foreign='cairo_device_release'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+    </implementation>
+
+    <implementation trait='std::clone::Clone' for='Device'>
+      <method name='clone' foreign='cairo_device_reference'>
+        <argument type='{Device}' pass_by='self' transformer='opaque'/>
+        <result type='{Device}'/>
+      </method>
+    </implementation>
+
+    <implementation trait='std::ops::Drop' for='Device'>
+      <method name='drop' foreign='cairo_device_destroy'>
+        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+    </implementation>
 
     <implementation for='Surface'>
-      <!-- TODO: cairo_surface_status -->
+      <!-- cairo_surface_create_similar -->
+
+      <method name='similar_image' foreign='cairo_surface_create_similar_image'>
+        <argument name='format' type='[format::Format]'/>
+        <argument name='width' type='int'/>
+        <argument name='height' type='int'/>
+        <result type='{Surface}'/>
+      </method>
+
+      <method name='for_rectangle' foreign='cairo_surface_create_for_rectangle'>
+        <argument name='x' type='double'/>
+        <argument name='y' type='double'/>
+        <argument name='width' type='double'/>
+        <argument name='height' type='double'/>
+        <result type='{Surface}'/>
+      </method>
+
+      <method name='status' foreign='cairo_surface_status'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <result type='[super::Status]'/>
+      </method>
+
       <method name='finish' foreign='cairo_surface_finish'>
         <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
       </method>
@@ -301,24 +500,112 @@
         <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
       </method>
 
-      <!-- TODO: A lot… -->
+      <!-- cairo_surface_get_device -->
+      <!-- cairo_surface_get_font_options -->
+
+      <!-- cairo_surface_get_content -->
+
+      <method name='mark_dirty' foreign='cairo_surface_mark_dirty'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <method name='mark_dirty_rectangle' foreign='cairo_surface_mark_dirty_rectangle'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <argument name='x' type='double'/>
+        <argument name='y' type='double'/>
+        <argument name='width' type='double'/>
+        <argument name='height' type='double'/>
+      </method>
+
+      <method name='set_device_offset' foreign='cairo_surface_set_device_offset'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <argument name='x_offset' type='double'/>
+        <argument name='y_offset' type='double'/>
+      </method>
+
+      <method name='get_device_offset' foreign='cairo_surface_get_device_offset'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <argument name='x_offset' type='double' pass_by='mut-ref' transformer='zero'/>
+        <argument name='y_offset' type='double' pass_by='mut-ref' transformer='zero'/>
+        <result name='x_offset' type='double' transformer='out'/>
+        <result name='y_offset' type='double' transformer='out'/>
+      </method>
+
+      <method name='surface_set_fallback_resolution' foreign='cairo_surface_set_fallback_resolution'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <argument name='x_pixels_per_inch' type='double'/>
+        <argument name='y_pixels_per_inch' type='double'/>
+      </method>
+
+      <method name='get_fallback_resolution' foreign='cairo_surface_get_fallback_resolution'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <argument name='x_pixels_per_inch' type='double' pass_by='mut-ref' transformer='zero'/>
+        <argument name='y_pixels_per_inch' type='double' pass_by='mut-ref' transformer='zero'/>
+        <result name='x_pixels_per_inch' type='double' transformer='out'/>
+        <result name='y_pixels_per_inch' type='double' transformer='out'/>
+      </method>
+
+      <!-- cairo_surface_get_type -->
+
+      <method name='get_reference_count' foreign='cairo_surface_get_reference_count'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <result type='unsigned int'/>
+      </method>
+
+      <!-- cairo_surface_set_user_data -->
+      <!-- cairo_surface_get_user_data -->
+
+      <method name='copy_page' foreign='cairo_surface_copy_page'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <method name='show_page' foreign='cairo_surface_show_page'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      </method>
+
+      <!-- cairo_surface_has_show_text_glyphs -->
+      <!-- cairo_surface_set_mime_data -->
+      <!-- cairo_surface_get_mime_data -->
+      <!-- cairo_surface_supports_mime_type -->
+      <!-- cairo_surface_map_to_image -->
+      <!-- cairo_surface_unmap_image -->
 
       <!-- Image Surface -->
 
       <!-- cairo_format_stride_for_width -->
 
       <method name='image' foreign='cairo_image_surface_create'>
-        <argument name='format' type='[Format]'/>
+        <argument name='format' type='[format::Format]'/>
         <argument name='width' type='int'/>
         <argument name='height' type='int'/>
         <result type='{Surface}'/>
       </method>
 
       <!-- cairo_image_surface_create_for_data -->
-      <!-- cairo_image_surface_get_format -->
-      <!-- cairo_image_surface_get_width -->
-      <!-- cairo_image_surface_get_height -->
-      <!-- cairo_image_surface_get_stride -->
+      <!-- cairo_image_surface_get_data -->
+
+      <method name='get_format' foreign='cairo_image_surface_get_format'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <result type='[format::Format]'/>
+      </method>
+
+      <method name='get_width' foreign='cairo_image_surface_get_width'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <result type='int'/>
+      </method>
+
+      <method name='get_height' foreign='cairo_image_surface_get_height'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <result type='int'/>
+      </method>
+
+      <method name='get_stride' foreign='cairo_image_surface_get_stride'>
+        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+        <result type='int'/>
+      </method>
+
+      <!-- PDF Surface -->
+      <!-- TODO: All missing -->
 
       <!-- PNG Surface -->
 
@@ -336,6 +623,15 @@
       </method>
 
       <!-- cairo_surface_write_to_png_stream -->
+
+      <!-- PostScript Surface -->
+      <!-- TODO: All missing -->
+
+      <!-- Recording Surface -->
+      <!-- TODO: All missing -->
+
+      <!-- Win32 Surface -->
+      <!-- TODO: All missing -->
 
       <!-- SVG Surface -->
       <method name='svg' foreign='cairo_svg_surface_create'>
@@ -357,6 +653,28 @@
       <method name='svg_version_to_string' foreign='cairo_svg_version_to_string'>
         <argument name='version' type='[SVGVersion]'/>
         <result type='{std::c_str::CString}' transformer='cstring'/>
+      </method>
+
+      <!-- Quartz Surface -->
+      <!-- TODO: All missing -->
+
+      <!-- XCB Surface -->
+      <!-- TODO: All missing -->
+
+      <!-- XLib Surface -->
+      <!-- TODO: All missing -->
+
+      <!-- XLib-XRender Surface -->
+      <!-- TODO: All missing -->
+
+      <!-- Script Surface -->
+      <!-- TODO: All missing -->
+    </implementation>
+
+    <implementation trait='std::clone::Clone' for='Surface'>
+      <method name='clone' foreign='cairo_surface_reference'>
+        <argument type='{Surface}' pass_by='self' transformer='opaque'/>
+        <result type='{Surface}'/>
       </method>
     </implementation>
 
