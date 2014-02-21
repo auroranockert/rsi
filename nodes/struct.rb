@@ -28,7 +28,7 @@ module RSI
     def to_code(indent)
       if self.opaque
         a = RSI.indent("pub struct #{self.name} {", indent)
-        b = RSI.indent("opaque: *std::libc::c_void", indent + 1)
+        b = RSI.indent("opaque: *mut std::libc::c_void", indent + 1)
         c = RSI.indent("}", indent)
 
         a + b + c

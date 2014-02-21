@@ -18,7 +18,7 @@ module RSI
     root_element_name :enum
 
     text_node :name, '@name'
-    text_node :representation, '@representation', default_value: 'u32'
+    text_node :representation, '@representation', default_value: 'i32'
     array_node :values, 'value', class: RSI::EnumValue, default_value: []
 
     def to_code(indent)

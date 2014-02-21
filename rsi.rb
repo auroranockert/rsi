@@ -14,6 +14,22 @@ module RSI
     case type
     when /\?\z/
       RSI::OptionType.new(RSI.type_from_string(type[0 .. -2]))
+    when 'i8', 'char'
+      RSI::IntType.new(true, 8)
+    when 'i16', 'short'
+      RSI::IntType.new(true, 16)
+    when 'i32', 'int'
+      RSI::IntType.new(true, 32)
+    when 'i64', 'long'
+      RSI::IntType.new(true, 64)
+    when 'u8', 'unsigned char'
+      RSI::IntType.new(true, 8)
+    when 'u16', 'unsigned short'
+      RSI::IntType.new(true, 16)
+    when 'u32', 'unsigned int'
+      RSI::IntType.new(true, 32)
+    when 'u64', 'unsigned long'
+      RSI::IntType.new(true, 64)
     when 'f32', 'single', 'float'
       RSI::FloatType.new(32)
     when 'f64', 'double'
@@ -22,10 +38,10 @@ module RSI
       RSI::String.new
     when /\A{([\w:]+)}\z/
       RSI::StructType.new($1)
-    when /\A\[([\w]+)\]\z/
+    when /\A\[([\w:]+)\]\z/
       RSI::EnumType.new($1)
     else
-      raise "Unknown type… #{type}"
+      raise "Unknown type… #{type.inspect}"
     end
   end
 

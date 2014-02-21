@@ -23,10 +23,14 @@ module RSI::ArgumentTransformer
 
     def to_c_argument
       case self.argument.pass_by
-      when 'self', 'mut-self'
-        "self_value: *std::libc::c_void"
-      when 'ref', 'mut-ref'
+      when 'self'
+        'self_value: *std::libc::c_void'
+      when 'mut-self'
+        'self_value: *mut std::libc::c_void'
+      when 'ref'
         "#{self.argument.name}: *std::libc::c_void"
+      when 'mut-ref'
+        "#{self.argument.name}: *mut std::libc::c_void"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
