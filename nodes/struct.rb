@@ -5,8 +5,14 @@ module RSI
     attribute :name
     attribute :type
 
-    def type= value
-      @type = Context.type_from_string(value)
+    ancestor :struct
+
+    def crate
+      self.struct.module.crate
+    end
+
+    def type
+      self.crate.type_from_string(@type) if @type
     end
 
     def to_code
@@ -21,6 +27,8 @@ module RSI
     attribute :opaque
 
     elements :field, as: 'fields', class: RSI::StructField
+
+    ancestor :module
 
     def to_code(indent)
       if self.opaque

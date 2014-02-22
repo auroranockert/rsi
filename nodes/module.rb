@@ -10,6 +10,12 @@ module RSI
     elements :struct, as: 'structs', class: RSI::Struct
     elements :implementation, as: 'implementations', class: RSI::Implementation
 
+    ancestor :module
+
+    def crate
+      self.module.crate
+    end
+
     def to_code(indent)
       a = RSI.indent("pub mod #{self.name} {", indent) + RSI.indent('use std;', indent + 1) + "\n"
 

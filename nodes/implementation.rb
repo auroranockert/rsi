@@ -10,12 +10,18 @@ module RSI
     attribute :value
     attribute :transformer
 
+    ancestor :function
+
+    def crate
+      self.function.implementation.module.crate
+    end
+
     def pass_by
       @pass_by || 'value'
     end
 
-    def type= value
-      @type = Context.type_from_string(value)
+    def type
+      self.crate.type_from_string(@type) if @type
     end
 
     def transformer
@@ -42,12 +48,18 @@ module RSI
     attribute :value
     attribute :transformer
 
+    ancestor :function
+
+    def crate
+      self.function.implementation.module.crate
+    end
+
     def pass_by
       @pass_by || 'value'
     end
 
-    def type= value
-      @type = Context.type_from_string(value)
+    def type
+      self.crate.type_from_string(@type) if @type
     end
 
     def transformer
@@ -75,6 +87,8 @@ module RSI
 
     elements :argument, as: 'arguments', class: RSI::Argument
     elements :result, as: 'results', class: RSI::Result
+
+    ancestor :implementation
 
     def extern
       @extern != 'false'
@@ -136,6 +150,8 @@ module RSI
     attribute :trait
 
     elements :method, as: 'functions', class: RSI::Function
+
+    ancestor :module
 
     def for_type
       @type ||= RSI::StructType.new(self.for)

@@ -5,7 +5,17 @@ module RSI
     attribute :name
     attribute :value
 
+    ancestor :enum
+
+    def value
+      @value ||= self.enum.next_value
+    end
+
     def to_code
+      value = self.value
+
+      self.enum.last_value = value.to_i
+
       "#{self.name} = #{self.value}"
     end
   end
@@ -17,6 +27,18 @@ module RSI
     attribute :representation
 
     elements :value, as: 'values', class: RSI::EnumValue
+
+    def last_value
+      @last_value ||= -1
+    end
+
+    def last_value=(value)
+      @last_value = value
+    end
+
+    def next_value
+      self.last_value + 1
+    end
 
     def representation
       @representation || 'i32'

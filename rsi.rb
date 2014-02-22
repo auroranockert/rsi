@@ -89,32 +89,6 @@ module RSI
       end
     end
   end
-  
-  class Ctx
-    def initialize(root, machine)
-      @root, @machine = root, machine
-    end
-
-    attr_reader :root, :machine
-
-    def type_from_string(string)
-      @machine.type_from_string(string)
-    end
-
-    def get_xml(file)
-      f = Nokogiri::XML(File.read(file))
-
-      f.xpath('//module[@file]').each do |m|
-        m.replace(get_xml("#{@root}/#{m['file']}.xml").root)
-      end
-
-      f
-    end
-
-    def parse(file)
-      RSI::Crate.parse(self.get_xml(file).to_s)
-    end
-  end
 end
 
 $:.unshift(File.dirname(__FILE__))
@@ -148,6 +122,4 @@ require 'nodes/library'
 
 require 'nodes/crate'
 
-Context = RSI::Ctx.new(File.dirname(ARGV[0]), RSI::Machine.new)
-
-puts Context.parse(ARGV[0]).to_code
+puts RSI::Crate.from_rsi(ARGV[0], RSI::Machine.new).to_code
