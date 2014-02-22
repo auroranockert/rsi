@@ -309,8 +309,8 @@
       <result type='unsigned int'/>
     </method>
 
-    <!-- cairo_pattern_set_user_data -->
-    <!-- cairo_pattern_get_user_data -->
+    <!-- TODO: cairo_pattern_set_user_data -->
+    <!-- TODO: cairo_pattern_get_user_data -->
   </implementation>
 
   <implementation trait='std::clone::Clone' for='Pattern'>

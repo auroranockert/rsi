@@ -94,8 +94,8 @@
       <result type='unsigned int'/>
     </method>
 
-    <!-- cairo_device_set_user_data -->
-    <!-- cairo_device_get_user_data -->
+    <!-- TODO: cairo_device_set_user_data -->
+    <!-- TODO: cairo_device_get_user_data -->
 
     <method name='acquire' foreign='cairo_device_acquire'>
       <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
@@ -121,7 +121,7 @@
   </implementation>
 
   <implementation for='Surface'>
-    <!-- cairo_surface_create_similar -->
+    <!-- TODO: cairo_surface_create_similar -->
 
     <method name='similar_image' foreign='cairo_surface_create_similar_image'>
       <argument name='format' type='[format::Format]'/>
@@ -216,8 +216,8 @@
       <result type='unsigned int'/>
     </method>
 
-    <!-- cairo_surface_set_user_data -->
-    <!-- cairo_surface_get_user_data -->
+    <!-- TODO: cairo_surface_set_user_data -->
+    <!-- TODO: cairo_surface_get_user_data -->
 
     <method name='copy_page' foreign='cairo_surface_copy_page'>
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
@@ -227,16 +227,16 @@
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_surface_has_show_text_glyphs -->
-    <!-- cairo_surface_set_mime_data -->
-    <!-- cairo_surface_get_mime_data -->
-    <!-- cairo_surface_supports_mime_type -->
-    <!-- cairo_surface_map_to_image -->
-    <!-- cairo_surface_unmap_image -->
+    <!-- TODO: cairo_surface_has_show_text_glyphs -->
+    <!-- TODO: cairo_surface_set_mime_data -->
+    <!-- TODO: cairo_surface_get_mime_data -->
+    <!-- TODO: cairo_surface_supports_mime_type -->
+    <!-- TODO: cairo_surface_map_to_image -->
+    <!-- TODO: cairo_surface_unmap_image -->
 
     <!-- Image Surface -->
 
-    <!-- cairo_format_stride_for_width -->
+    <!-- TODO: cairo_format_stride_for_width -->
 
     <method name='image' foreign='cairo_image_surface_create'>
       <argument name='format' type='[format::Format]'/>
@@ -245,8 +245,8 @@
       <result type='{Surface}'/>
     </method>
 
-    <!-- cairo_image_surface_create_for_data -->
-    <!-- cairo_image_surface_get_data -->
+    <!-- TODO: cairo_image_surface_create_for_data -->
+    <!-- TODO: cairo_image_surface_get_data -->
 
     <method name='get_format' foreign='cairo_image_surface_get_format'>
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
@@ -278,7 +278,7 @@
       <result type='{Surface}'/>
     </method>
 
-    <!-- cairo_image_surface_create_from_png_stream -->
+    <!-- TODO: cairo_image_surface_create_from_png_stream -->
 
     <method name='to_png' foreign='cairo_surface_write_to_png'>
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
@@ -286,7 +286,7 @@
       <result type='[super::Status]'/>
     </method>
 
-    <!-- cairo_surface_write_to_png_stream -->
+    <!-- TODO: cairo_surface_write_to_png_stream -->
 
     <!-- PostScript Surface -->
     <!-- TODO: All missing -->

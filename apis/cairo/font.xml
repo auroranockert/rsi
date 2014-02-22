@@ -218,8 +218,8 @@
       <result type='unsigned int'/>
     </method>
 
-    <!-- cairo_font_face_set_user_data -->
-    <!-- cairo_font_face_get_user_data -->
+    <!-- TODO: cairo_font_face_set_user_data -->
+    <!-- TODO: cairo_font_face_get_user_data -->
   </implementation>
 
   <implementation trait='std::clone::Clone' for='FontFace'>
@@ -270,7 +270,7 @@
       <result name='extents' type='[TextExtents]' transformer='out'/>
     </method>
 
-    <!-- cairo_scaled_font_text_to_glyphs -->
+    <!-- TODO: cairo_scaled_font_text_to_glyphs -->
 
     <method name='get_font_face' foreign='cairo_scaled_font_get_font_face'>
       <argument type='{ScaledFont}' pass_by='mut-self' transformer='opaque'/>
@@ -310,9 +310,8 @@
       <result type='unsigned int'/>
     </method>
 
-    <!-- cairo_scaled_font_set_user_data -->
-    <!-- cairo_scaled_font_get_user_data -->
-
+    <!-- TODO: cairo_scaled_font_set_user_data -->
+    <!-- TODO: cairo_scaled_font_get_user_data -->
   </implementation>
 
   <implementation trait='std::clone::Clone' for='ScaledFont'>
