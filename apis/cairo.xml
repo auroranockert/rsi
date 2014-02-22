@@ -457,8 +457,8 @@
 
   <module file='cairo/path'/>
   <module file='cairo/pattern'/>
+  <module file='cairo/region'/>
 
-  <!-- Regions -->
   <!-- Text -->
   <!-- Raster Sources -->
 
