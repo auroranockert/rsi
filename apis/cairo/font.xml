@@ -99,7 +99,11 @@
       <result type='unsigned long'/>
     </method>
 
-    <!-- cairo_font_options_equal -->
+    <method name='equal' foreign='cairo_font_options_equal'>
+      <argument type='{Options}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='other' type='{Options}' pass_by='ref' transformer='opaque'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
 
     <method name='set_antialias' foreign='cairo_font_options_set_antialias'>
       <argument type='{Options}' pass_by='mut-self' transformer='opaque'/>

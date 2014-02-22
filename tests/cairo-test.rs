@@ -2,7 +2,7 @@ mod cairo;
 
 fn main() {
   use std;
-  use cairo::Cairo;
+  use cairo;
   use cairo::matrix::Matrix;
   use cairo::surface;
   use cairo::surface::Surface;
@@ -11,7 +11,7 @@ fn main() {
   let (width, height) = (500.0, 500.0);
   let mut s = Surface::image(surface::format::ARGB32, width as i32, height as i32);
 
-  let mut cairo = Cairo::new(&mut s);
+  let mut cairo = cairo::Cairo::new(&mut s);
 
   let mut m = Matrix::new(width, 1.0, 1.0, -height, 0.0, height);
 
@@ -48,7 +48,7 @@ fn main() {
   s.finish();
 
   s = Surface::image(surface::format::ARGB32, width as i32, height as i32);
-  cairo = Cairo::new(&mut s);
+  cairo = cairo::Cairo::new(&mut s);
 
   cairo.save();
   cairo.set_source_rgb(0.3, 0.3, 1.0);
@@ -83,7 +83,7 @@ fn main() {
   let size = petal_size * 8.0;
 
   s = Surface::image(surface::format::ARGB32, size as i32, size as i32);
-  cairo = Cairo::new(&mut s);
+  cairo = cairo::Cairo::new(&mut s);
 
   cairo.set_tolerance(0.1);
 
@@ -133,4 +133,6 @@ fn main() {
 
   s.to_png("test3.png");
   s.finish();
+
+  println!("{:?}", cairo::font::Options::new().equal(&cairo::font::Options::new()));
 }

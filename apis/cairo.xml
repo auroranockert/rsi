@@ -56,6 +56,29 @@
       <value name='Best' value='6'/>
     </enum>
   </module>
+  
+  <module name='fill_rule'>
+    <enum name='FillRule'>
+      <value name='Winding' value='0'/>
+      <value name='EvenOdd' value='1'/>
+    </enum>
+  </module>
+
+  <module name='line_cap'>
+    <enum name='LineCap'>
+      <value name='Butt' value='0'/>
+      <value name='Round' value='1'/>
+      <value name='Square' value='2'/>
+    </enum>
+  </module>
+
+  <module name='line_join'>
+    <enum name='LineJoin'>
+      <value name='Miter' value='0'/>
+      <value name='Round' value='1'/>
+      <value name='Bevel' value='2'/>
+    </enum>
+  </module>
 
   <implementation for='Cairo'>
     <method name='new' foreign='cairo_create'>
@@ -90,7 +113,10 @@
       <argument name='content' type='[surface::content::Content]'/>
     </method>
 
-    <!-- cairo_pop_group -->
+    <method name='pop_group' foreign='cairo_pop_group'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{pattern::Pattern}'/>
+    </method>
 
     <method name='pop_group_to_source' foreign='cairo_pop_group_to_source'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -116,7 +142,71 @@
       <argument name='alpha' type='double'/>
     </method>
 
-    <!-- TODO: A lot… -->
+    <method name='set_source' foreign='cairo_set_source'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='source' type='{pattern::Pattern}' pass_by='mut-ref' transformer='opaque'/>
+    </method>
+
+    <method name='set_source_surface' foreign='cairo_set_source_surface'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='surface' type='{surface::Surface}' pass_by='mut-ref' transformer='opaque'/>
+      <argument name='x' type='double'/>
+      <argument name='y' type='double'/>
+    </method>
+
+    <method name='get_source' foreign='cairo_get_source'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{pattern::Pattern}'/>
+    </method>
+
+    <method name='set_antialias' foreign='cairo_set_antialias'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='antialias' type='[antialias::Antialias]'/>
+    </method>
+
+    <method name='get_antialias' foreign='cairo_get_antialias'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[antialias::Antialias]'/>
+    </method>
+
+    <!-- cairo_set_dash -->
+
+    <method name='get_dash_count' foreign='cairo_get_dash_count'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='int'/>
+    </method>
+
+    <!-- cairo_get_dash -->
+
+    <method name='set_fill_rule' foreign='cairo_set_fill_rule'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='fill_rule' type='[fill_rule::FillRule]'/>
+    </method>
+
+    <method name='get_fill_rule' foreign='cairo_get_fill_rule'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[fill_rule::FillRule]'/>
+    </method>
+
+    <method name='set_line_cap' foreign='cairo_set_line_cap'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='line_cap' type='[line_cap::LineCap]'/>
+    </method>
+
+    <method name='get_line_cap' foreign='cairo_get_line_cap'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[line_cap::LineCap]'/>
+    </method>
+
+    <method name='set_line_join' foreign='cairo_set_line_join'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='line_join' type='[line_join::LineJoin]'/>
+    </method>
+
+    <method name='get_line_join' foreign='cairo_get_line_join'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[line_join::LineJoin]'/>
+    </method>
 
     <method name='set_line_width' foreign='cairo_set_line_width'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -178,7 +268,12 @@
       <result name='y2' type='double' transformer='out'/>
     </method>
 
-    <!-- cairo_in_clip -->
+    <method name='in_clip' foreign='cairo_in_clip'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double'/>
+      <argument name='y' type='double'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
 
     <method name='reset_clip' foreign='cairo_reset_clip'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -204,9 +299,17 @@
       <result name='y2' type='double' transformer='out'/>
     </method>
 
-    <!-- cairo_fill_extents -->
-    <!-- cairo_in_fill -->
-    <!-- cairo_mask -->
+    <method name='in_fill' foreign='cairo_in_fill'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double'/>
+      <argument name='y' type='double'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
+
+    <method name='mask' foreign='cairo_mask'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='pattern' type='{pattern::Pattern}' pass_by='mut-ref' transformer='opaque'/>
+    </method>
 
     <method name='mask_surface' foreign='cairo_mask_surface'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -244,7 +347,12 @@
       <result name='y2' type='double' transformer='out'/>
     </method>
 
-    <!-- cairo_in_stroke -->
+    <method name='in_stroke' foreign='cairo_in_stroke'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double'/>
+      <argument name='y' type='double'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
 
     <method name='copy_page' foreign='cairo_copy_page'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -279,7 +387,10 @@
       <argument name='path' type='{path::Path}' pass_by='ref' transformer='opaque'/>
     </method>
 
-    <!-- cairo_has_current_point -->
+    <method name='has_current_point' foreign='cairo_has_current_point'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
 
     <method name='get_current_point' foreign='cairo_get_current_point'>
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
@@ -378,7 +489,17 @@
       <argument name='dy' type='double'/>
     </method>
 
-    <!-- cairo_path_extents -->
+    <method name='path_extents' foreign='cairo_path_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='x2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <result name='x1' type='double' transformer='out'/>
+      <result name='y1' type='double' transformer='out'/>
+      <result name='x2' type='double' transformer='out'/>
+      <result name='y2' type='double' transformer='out'/>
+    </method>
 
     <!-- Transformations -->
 

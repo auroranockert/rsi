@@ -20,12 +20,12 @@
     <method name='new' foreign='cairo_region_create'>
       <result type='{Region}'/>
     </method>
-    
+
     <method name='rectangle' foreign='cairo_region_create_rectangle'>
       <argument name='rectangle' type='{Rectangle}' pass_by='ref'/>
       <result type='{Region}'/>
     </method>
-    
+
     <!-- cairo_region_create_rectangles -->
 
     <method name='status' foreign='cairo_region_status'>
@@ -51,16 +51,29 @@
       <result name='rectangle' type='{Rectangle}' transformer='out'/>
     </method>
 
-    <!-- cairo_region_is_empty -->
-    <!-- cairo_region_contains_point -->
-    
+    <method name='is_empty' foreign='cairo_region_is_empty'>
+      <argument type='{Region}' pass_by='mut-self' transformer='opaque'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
+
+    <method name='contains_point' foreign='cairo_region_contains_point'>
+      <argument type='{Region}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='int'/>
+      <argument name='y' type='int'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
+
     <method name='containts_rectangle' foreign='cairo_region_contains_rectangle'>
       <argument type='{Region}' pass_by='mut-self' transformer='opaque'/>
       <argument name='rectangle' type='{Rectangle}' pass_by='ref'/>
       <result type='[overlap::Overlap]'/>
     </method>
 
-    <!-- cairo_region_equal -->
+    <method name='equal' foreign='cairo_region_equal'>
+      <argument type='{Region}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='other' type='{Region}' pass_by='ref' transformer='opaque'/>
+      <result type='i32' transformer='compare' value='0'/>
+    </method>
 
     <method name='translate' foreign='cairo_region_translate'>
       <argument type='{Region}' pass_by='mut-self' transformer='opaque'/>

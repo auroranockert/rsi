@@ -9,6 +9,7 @@ module RSI
 
     text_node :pass_by, '@pass_by', default_value: 'value'
 
+    text_node :value, '@value', optional: true
     text_node :trans, '@transformer', optional: true
 
     def type
@@ -50,6 +51,7 @@ module RSI
 
     text_node :pass_by, '@pass_by', default_value: 'value'
 
+    text_node :value, '@value', optional: true
     text_node :trans, '@transformer', optional: true
 
     def type

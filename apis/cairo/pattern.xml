@@ -231,7 +231,11 @@
       <result name='count' type='unsigned int' transformer='out'/>
     </method>
 
-    <!-- TODO: cairo_mesh_pattern_get_path (what is the refcount?) -->
+    <method name='get_path' foreign='cairo_mesh_pattern_get_path'>
+      <argument type='{Pattern}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='patch_num' type='unsigned int'/>
+      <result type='{super::path::Path}'/>
+    </method>
 
     <method name='get_control_point' foreign='cairo_mesh_pattern_get_control_point'>
       <argument type='{Pattern}' pass_by='mut-self' transformer='opaque'/>

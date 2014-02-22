@@ -70,6 +70,8 @@ module RSI
       RSI::OutTransformer.new(arg)
     when 'clone'
       RSI::CloneTransformer.new(arg)
+    when 'compare'
+      RSI::CompareTransformer.new(arg)
     when 'cstring'
       RSI::CStringTransformer.new(arg)
     when 'foreign'
@@ -180,6 +182,7 @@ require 'argument-transformers/to-mut-ref'
 
 require 'result-transformers/out'
 require 'result-transformers/clone'
+require 'result-transformers/compare'
 require 'result-transformers/cstring'
 require 'result-transformers/foreign'
 
