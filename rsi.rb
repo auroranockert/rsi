@@ -10,43 +10,6 @@ module RSI
     "  " * n + string.gsub("\n", "\n" + "  " * n) + "\n"
   end
 
-  def self.type_from_string(type)
-    case type
-    when /([\w:{}\[\]]+)\?\z/
-      RSI::OptionType.new(RSI.type_from_string($1))
-    when 'i8', 'char'
-      RSI::IntType.new(true, 8)
-    when 'i16', 'short'
-      RSI::IntType.new(true, 16)
-    when 'i32', 'int'
-      RSI::IntType.new(true, 32)
-    when 'i64', 'long'
-      RSI::IntType.new(true, 64)
-    when 'u8', 'unsigned char'
-      RSI::IntType.new(true, 8)
-    when 'u16', 'unsigned short'
-      RSI::IntType.new(true, 16)
-    when 'u32', 'unsigned int'
-      RSI::IntType.new(true, 32)
-    when 'u64', 'unsigned long'
-      RSI::IntType.new(true, 64)
-    when 'f32', 'single', 'float'
-      RSI::FloatType.new(32)
-    when 'f64', 'double'
-      RSI::FloatType.new(64)
-    when 'string'
-      RSI::String.new
-    when /\A{([\w:]+)}\z/
-      RSI::StructType.new($1)
-    when /\A\[([\w:]+)\]\z/
-      RSI::EnumType.new($1)
-    when /\Avec ([\w:{}\[\]]+)\z/
-      RSI::VecType.new(RSI.type_from_string($1))
-    else
-      raise "Unknown type… #{type.inspect}"
-    end
-  end
-
   def self.argument_transformer_from_name(transformer, arg)
     case transformer
     when 'identity'
@@ -89,110 +52,67 @@ module RSI
     end
   end
 
-  class OptionType
-    def initialize(type)
-      @type = type
-    end
-
-    attr_reader :type
-
-    def to_s
-      "Option<#{@type}>"
-    end
-  end
-
-  class StructType
-    def initialize(name)
-      @name = name
-    end
-
-    attr_reader :name
-
-    def to_s
-      @name
-    end
-  end
-
-  class VecType
-    def initialize(type)
-      @type = type
-    end
-
-    attr_reader :type
-
-    def to_s
-      "[#{@type}]"
-    end
-  end
-
-  class EnumType
-    def initialize(name)
-      @name = name
-    end
-
-    attr_reader :name
-
-    def to_s
-      @name
-    end
-  end
-
-  class String
-    def to_s
-      'str'
+  class Machine # TODO: Implement non-amd64 support maybe?
+    def type_from_string(type)
+      case type
+      when 'i8', 'char'
+        RSI::Type::Integer.new(true, 8)
+      when 'i16', 'short'
+        RSI::Type::Integer.new(true, 16)
+      when 'i32', 'int'
+        RSI::Type::Integer.new(true, 32)
+      when 'i64', 'long'
+        RSI::Type::Integer.new(true, 64)
+      when 'u8', 'unsigned char'
+        RSI::Type::Integer.new(true, 8)
+      when 'u16', 'unsigned short'
+        RSI::Type::Integer.new(true, 16)
+      when 'u32', 'unsigned int'
+        RSI::Type::Integer.new(true, 32)
+      when 'u64', 'unsigned long'
+        RSI::Type::Integer.new(true, 64)
+      when 'f32', 'single', 'float'
+        RSI::Type::Float.new(32)
+      when 'f64', 'double'
+        RSI::Type::Float.new(64)
+      when 'string'
+        RSI::Type::String.new
+      when /\A{([\w:]+)}\z/
+        RSI::Type::Struct.new($1)
+      when /\A\[([\w:]+)\]\z/
+        RSI::Type::Enum.new($1)
+      when /\Avec ([\w:{}\[\]]+)\z/
+        RSI::Type::Vec.new(self.type_from_string($1))
+      else
+        raise "Unknown type… #{type.inspect}"
+      end
     end
   end
   
-  class CString
-    def to_s
-      'std::c_str::CString'
-    end
-  end
-
-  class IntType
-    def initialize(signed, bits)
-      @signed, @bits = signed, bits
+  class Ctx
+    def initialize(root, machine)
+      @root, @machine = root, machine
     end
 
-    attr_reader :signed, :bits
+    attr_reader :root, :machine
 
-    def to_s
-      case self.bits
-      when 64
-        self.signed ? 'i64' : 'u64'
-      when 32
-        self.signed ? 'i32' : 'u32'
-      when 16
-        self.signed ? 'i16' : 'u16'
-      when 8
-        self.signed ? 'i8' : 'u8'
-      else
-        raise "Unknown bit-length for integer #{self.bits}"
-      end
-    end
-  end
-
-  class FloatType
-    def initialize(bits)
-      @bits = bits
+    def type_from_string(string)
+      @machine.type_from_string(string)
     end
 
-    attr_reader :bits
-
-    def to_s
-      case self.bits
-      when 64
-        'f64'
-      when 32
-        'f32'
-      else
-        raise "Unknown bit-length for float #{self.bits}"
-      end
+    def parse(file)
+      RSI::Crate.load_from_file(file)
     end
   end
 end
 
 $:.unshift(File.dirname(__FILE__))
+
+require 'types/enum'
+require 'types/numeric'
+require 'types/string'
+require 'types/struct'
+require 'types/vec'
 
 require 'argument-transformers/zero'
 require 'argument-transformers/opaque'
@@ -217,6 +137,6 @@ require 'nodes/library'
 
 require 'nodes/crate'
 
-Root = File.dirname(ARGV[0])
+Context = RSI::Ctx.new(File.dirname(ARGV[0]), RSI::Machine.new)
 
-puts RSI::Crate.load_from_file(ARGV[0]).to_code
+puts Context.parse(ARGV[0]).to_code

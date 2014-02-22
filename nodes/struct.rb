@@ -8,7 +8,7 @@ module RSI
     text_node :ty, '@type'
 
     def type
-      @type ||= RSI.type_from_string(self.ty)
+      @type ||= Context.type_from_string(self.ty)
     end
 
     def to_code

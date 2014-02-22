@@ -6,7 +6,7 @@ module RSI::ArgumentTransformer
       @argument = argument
     end
 
-    def to_rust_argument
+    def to_rust_argument()
       case self.argument.pass_by
       when 'self'
         "&self"

@@ -13,31 +13,15 @@ module RSI
     text_node :trans, '@transformer', optional: true
 
     def type
-      @type ||= RSI.type_from_string(self.ty)
+      Context.type_from_string(self.ty)
     end
 
     def transformer
       @transformer ||= RSI.argument_transformer_from_name(self.trans || 'identity', self)
     end
 
-    def to_rust_argument
-      self.transformer.to_rust_argument
-    end
-
-    def to_c_argument
-      self.transformer.to_c_argument
-    end
-
-    def to_c_call_argument
-      self.transformer.to_c_call_argument
-    end
-
-    def uses(indent)
-      self.transformer.uses(indent)
-    end
-
-    def to_preparation_code(indent)
-      self.transformer.to_preparation_code(indent)
+    def method_missing(message, *args)
+      self.transformer.public_send(message, *args)
     end
   end
 
@@ -55,35 +39,15 @@ module RSI
     text_node :trans, '@transformer', optional: true
 
     def type
-      @type ||= RSI.type_from_string(self.ty)
+      Context.type_from_string(self.ty)
     end
 
     def transformer
       @transformer ||= RSI.result_transformer_from_name(self.trans || 'foreign', self)
     end
 
-    def to_rust_result
-      self.transformer.to_rust_result
-    end
-
-    def to_rust_result_type
-      self.transformer.to_rust_result_type
-    end
-
-    def to_c_result
-      self.transformer.to_c_result
-    end
-
-    def to_c_result_type
-      self.transformer.to_c_result_type
-    end
-
-    def needs_foreign_result
-      self.transformer.needs_foreign_result
-    end
-    
-    def to_postparation_code(indent)
-      self.transformer.to_postparation_code(indent)
+    def method_missing(message, *args)
+      self.transformer.public_send(message, *args)
     end
   end
 
@@ -100,14 +64,14 @@ module RSI
     array_node :results, 'result', class: RSI::Result, default_value: []
 
     def to_code(trait, indent)
-      prototype_args = self.arguments.map(&:to_rust_argument).select { |a| a }.join(', ')
+      prototype_args = self.arguments.map { |a| a.to_rust_argument }.select { |a| a }.join(', ')
       prototype_result = case self.results.length
       when 0
         ''
       when 1
         " -> #{self.results[0].to_rust_result_type}"
       else
-        " -> (#{self.results.map(&:to_rust_result_type).join(', ')})"
+        " -> (#{self.results.map { |r| r.to_rust_result_type }.join(', ')})"
       end
 
       a = RSI.indent("#{trait ? '' : 'pub '}fn #{self.name}(#{prototype_args})#{prototype_result} {", indent)
@@ -116,7 +80,7 @@ module RSI
       c = self.arguments.map { |a| a.uses(indent + 2) }.select { |a| a }.join('')
       d = self.arguments.map { |a| a.to_preparation_code(indent + 2) }.select { |a| a }.join('')
 
-      e = "#{self.foreign}(#{self.arguments.map(&:to_c_call_argument).select { |a| a }.join(', ')});"
+      e = "#{self.foreign}(#{self.arguments.map { |a| a.to_c_call_argument }.select { |a| a }.join(', ')});"
       e = RSI.indent((self.results.any? { |r| r.needs_foreign_result } ? 'let foreign_result = ' : '') + e, indent + 2)
 
       f = self.results.map { |r| r.to_postparation_code(indent + 2) }.select { |r| r }.join('')
