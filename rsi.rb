@@ -12,8 +12,8 @@ module RSI
 
   def self.type_from_string(type)
     case type
-    when /\?\z/
-      RSI::OptionType.new(RSI.type_from_string(type[0 .. -2]))
+    when /([\w:]+)\?\z/
+      RSI::OptionType.new(RSI.type_from_string($1))
     when 'i8', 'char'
       RSI::IntType.new(true, 8)
     when 'i16', 'short'
@@ -40,6 +40,8 @@ module RSI
       RSI::StructType.new($1)
     when /\A\[([\w:]+)\]\z/
       RSI::EnumType.new($1)
+    when /\Avec ([\w:]+)\z/
+      RSI::VecType.new(RSI.type_from_string($1))
     else
       raise "Unknown type… #{type.inspect}"
     end
@@ -59,6 +61,12 @@ module RSI
       RSI::ArgumentTransformer::FromMutRef.new(arg)
     when 'cstring'
       RSI::ArgumentTransformer::CString.new(arg)
+    when 'vec'
+      RSI::ArgumentTransformer::Vec.new(arg)
+    when 'vec-zero'
+      RSI::ArgumentTransformer::VecZero.new(arg)
+    when 'vec-length'
+      RSI::ArgumentTransformer::VecLength.new(arg)
     else
       raise "Unknown transformer… #{transformer}"
     end
@@ -102,6 +110,18 @@ module RSI
 
     def to_s
       @name
+    end
+  end
+
+  class VecType
+    def initialize(type)
+      @type = type
+    end
+
+    attr_reader :type
+
+    def to_s
+      "[#{@type}]"
     end
   end
 
@@ -179,6 +199,9 @@ require 'argument-transformers/opaque'
 require 'argument-transformers/cstring'
 require 'argument-transformers/identity'
 require 'argument-transformers/to-mut-ref'
+require 'argument-transformers/vec'
+require 'argument-transformers/vec-zero'
+require 'argument-transformers/vec-length'
 
 require 'result-transformers/out'
 require 'result-transformers/clone'

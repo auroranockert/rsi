@@ -169,14 +169,25 @@
       <result type='[antialias::Antialias]'/>
     </method>
 
-    <!-- cairo_set_dash -->
+    <method name='set_dash' foreign='cairo_set_dash'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='dashes' type='vec double' pass_by='ref' transformer='vec'/>
+      <argument name='dashes' type='int' transformer='vec-length'/>
+      <argument name='offset' type='double'/>
+    </method>
 
     <method name='get_dash_count' foreign='cairo_get_dash_count'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
       <result type='int'/>
     </method>
 
-    <!-- cairo_get_dash -->
+    <method name='get_dash' foreign='cairo_get_dash'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='dashes' type='vec double' pass_by='mut-ref' transformer='vec-zero' value='self.get_dash_count()'/>
+      <argument name='offset' type='double' pass_by='mut-ref' transformer='zero'/>
+      <result name='dashes' type='vec double' pass_by='owned' transformer='out'/>
+      <result name='offset' type='double' transformer='out'/>
+    </method>
 
     <method name='set_fill_rule' foreign='cairo_set_fill_rule'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>

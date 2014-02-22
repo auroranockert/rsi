@@ -22,10 +22,39 @@
       <value name='GL' value='1'/>
       <value name='Script' value='2'/>
       <value name='XCB' value='3'/>
-      <value name='XLIB' value='4'/>
+      <value name='XLib' value='4'/>
       <value name='XML' value='5'/>
       <value name='COGL' value='6'/>
       <value name='Win32' value='7'/>
+    </enum>
+  </module>
+  
+  <module name='surface_type'>
+    <enum name='SurfaceType'>
+      <value name='Image' value='0'/>
+      <value name='PDF' value='1'/>
+      <value name='PS' value='2'/>
+      <value name='XLib' value='3'/>
+      <value name='Glitz' value='4'/>
+      <value name='Quartz' value='5'/>
+      <value name='Win32' value='6'/>
+      <value name='BeOS' value='7'/>
+      <value name='DirectFB' value='8'/>
+      <value name='SVG' value='9'/>
+      <value name='OS2' value='10'/>
+      <value name='Win32Printing' value='11'/>
+      <value name='QuartzImage' value='12'/>
+      <value name='Script' value='13'/>
+      <value name='Qt' value='14'/>
+      <value name='Recording' value='15'/>
+      <value name='VG' value='16'/>
+      <value name='GL' value='17'/>
+      <value name='DRM' value='18'/>
+      <value name='Tee' value='19'/>
+      <value name='XML' value='20'/>
+      <value name='Skia' value='21'/>
+      <value name='Subsurface' value='22'/>
+      <value name='CoGL' value='23'/>
     </enum>
   </module>
 
@@ -122,10 +151,20 @@
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_surface_get_device -->
-    <!-- cairo_surface_get_font_options -->
+    <method name='get_device' foreign='cairo_surface_get_device'>
+      <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{Device}' transformer='clone'/>
+    </method>
 
-    <!-- cairo_surface_get_content -->
+    <method name='get_font_options' foreign='cairo_surface_get_font_options'>
+      <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='options' type='{super::font::Options}' pass_by='mut-ref' transformer='opaque'/>
+    </method>
+
+    <method name='get_content' foreign='cairo_surface_get_content'>
+      <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[content::Content]'/>
+    </method>
 
     <method name='mark_dirty' foreign='cairo_surface_mark_dirty'>
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
@@ -167,7 +206,10 @@
       <result name='y_pixels_per_inch' type='double' transformer='out'/>
     </method>
 
-    <!-- cairo_surface_get_type -->
+    <method name='get_type' foreign='cairo_surface_get_type'>
+      <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[surface_type::SurfaceType]'/>
+    </method>
 
     <method name='get_reference_count' foreign='cairo_surface_get_reference_count'>
       <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
