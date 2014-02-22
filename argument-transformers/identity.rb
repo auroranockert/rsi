@@ -7,19 +7,21 @@ module RSI::ArgumentTransformer
     end
 
     def to_rust_argument
-      case self.argument.pass_by
-      when 'value'
-        "#{self.argument.name}: #{self.argument.type}"
-      when 'ref'
-        "#{self.argument.name}: &#{self.argument.type}"
-      when 'mut-ref'
-        "#{self.argument.name}: &mut #{self.argument.type}"
-      when 'self'
-        '&self'
-      when 'mut-self'
-        '&mut self'
-      else
-        raise "Unknown pass_by #{self.argument.pass_by}"
+      unless self.argument.value
+        case self.argument.pass_by
+        when 'value'
+          "#{self.argument.name}: #{self.argument.type}"
+        when 'ref'
+          "#{self.argument.name}: &#{self.argument.type}"
+        when 'mut-ref'
+          "#{self.argument.name}: &mut #{self.argument.type}"
+        when 'self'
+          '&self'
+        when 'mut-self'
+          '&mut self'
+        else
+          raise "Unknown pass_by #{self.argument.pass_by}"
+        end
       end
     end
 
@@ -41,11 +43,15 @@ module RSI::ArgumentTransformer
     end
 
     def to_c_call_argument
-      case self.argument.pass_by
-      when 'self', 'mut-self'
-        'self'
+      if self.argument.value
+        "#{self.argument.value}"
       else
-        "#{self.argument.name}"
+        case self.argument.pass_by
+        when 'self', 'mut-self'
+          'self'
+        else
+          "#{self.argument.name}"
+        end
       end
     end
 

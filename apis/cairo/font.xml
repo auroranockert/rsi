@@ -9,6 +9,11 @@
     <field name='y' type='double'/>
   </struct>
 
+  <struct name='Cluster'>
+    <field name='num_bytes' type='int'/>
+    <field name='num_glyphs' type='int'/>
+  </struct>
+
   <struct name='FontExtents'>
     <field name='ascent' type='double'/>
     <field name='descent' type='double'/>
@@ -25,6 +30,13 @@
     <field name='max_x_advance' type='double'/>
     <field name='max_y_advance' type='double'/>
   </struct>
+
+  <module name='cluster_flags'>
+    <enum name='ClusterFlags'>
+      <value name='Forwards' value='0'/>
+      <value name='Backwards' value='1'/>
+    </enum>
+  </module>
 
   <module name='font_type'>
     <enum name='FontType'>
@@ -250,7 +262,14 @@
       <result name='extents' type='[TextExtents]' transformer='out'/>
     </method>
 
-    <!-- cairo_scaled_font_glyph_extents -->
+    <method name='glyph_extents' foreign='cairo_scaled_font_glyph_extents'>
+      <argument type='{ScaledFont}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='glyphs' type='vec {Glyph}' pass_by='ref' transformer='vec'/>
+      <argument name='glyphs' type='int' transformer='vec-length'/>
+      <argument name='extents' type='[TextExtents]' pass_by='mut-ref' transformer='zero'/>
+      <result name='extents' type='[TextExtents]' transformer='out'/>
+    </method>
+
     <!-- cairo_scaled_font_text_to_glyphs -->
 
     <method name='get_font_face' foreign='cairo_scaled_font_get_font_face'>

@@ -12,7 +12,7 @@ module RSI
 
   def self.type_from_string(type)
     case type
-    when /([\w:]+)\?\z/
+    when /([\w:{}\[\]]+)\?\z/
       RSI::OptionType.new(RSI.type_from_string($1))
     when 'i8', 'char'
       RSI::IntType.new(true, 8)
@@ -40,7 +40,7 @@ module RSI
       RSI::StructType.new($1)
     when /\A\[([\w:]+)\]\z/
       RSI::EnumType.new($1)
-    when /\Avec ([\w:]+)\z/
+    when /\Avec ([\w:{}\[\]]+)\z/
       RSI::VecType.new(RSI.type_from_string($1))
     else
       raise "Unknown type… #{type.inspect}"

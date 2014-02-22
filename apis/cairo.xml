@@ -471,7 +471,11 @@
       <argument name='height' type='double'/>
     </method>
 
-    <!--  cairo_glyph_path -->
+    <method name='glyph_path' foreign='cairo_glyph_path'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='glyphs' type='vec {font::Glyph}' pass_by='ref' transformer='vec'/>
+      <argument name='glyphs' type='int' transformer='vec-length'/>
+    </method>
 
     <method name='text_path' foreign='cairo_text_path'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -643,8 +647,22 @@
       <argument name='utf8' type='string' pass_by='ref'/>
     </method>
 
-    <!-- cairo_show_glyphs -->
-    <!-- cairo_show_text_glyphs -->
+    <method name='show_glyphs' foreign='cairo_show_glyphs'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='glyphs' type='vec {font::Glyph}' pass_by='ref' transformer='vec'/>
+      <argument name='glyphs' type='int' transformer='vec-length'/>
+    </method>
+
+    <method name='show_text_glyphs' foreign='cairo_show_text_glyphs'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='utf8' type='string' pass_by='ref'/>
+      <argument name='utf8_len' type='int' value='-1'/>
+      <argument name='glyphs' type='vec {font::Glyph}' pass_by='ref' transformer='vec'/>
+      <argument name='glyphs' type='int' transformer='vec-length'/>
+      <argument name='clusters' type='vec {font::Cluster}' pass_by='ref' transformer='vec'/>
+      <argument name='clusters' type='int' transformer='vec-length'/>
+      <argument name='cluster_flags' type='[font::cluster_flags::ClusterFlags]'/>
+    </method>
 
     <method name='font_extents' foreign='cairo_font_extents'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -659,7 +677,13 @@
       <result name='extents' type='[font::TextExtents]' transformer='out'/>
     </method>
 
-    <!-- cairo_glyph_extents -->
+    <method name='glyph_extents' foreign='cairo_glyph_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='glyphs' type='vec {font::Glyph}' pass_by='ref' transformer='vec'/>
+      <argument name='glyphs' type='int' transformer='vec-length'/>
+      <argument name='extents' type='[font::TextExtents]' pass_by='mut-ref' transformer='zero'/>
+      <result name='extents' type='[font::TextExtents]' transformer='out'/>
+    </method>
   </implementation>
 
   <implementation trait='std::clone::Clone' for='Cairo'>

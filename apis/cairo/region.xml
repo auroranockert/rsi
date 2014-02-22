@@ -26,7 +26,11 @@
       <result type='{Region}'/>
     </method>
 
-    <!-- cairo_region_create_rectangles -->
+    <method name='rectangles' foreign='cairo_region_create_rectangles'>
+      <argument name='rectangles' type='vec {Rectangle}' pass_by='ref' transformer='vec'/>
+      <argument name='rectangles' type='int' transformer='vec-length'/>
+      <result type='{Region}'/>
+    </method>
 
     <method name='status' foreign='cairo_region_status'>
       <argument type='{Region}' pass_by='mut-self' transformer='opaque'/>
