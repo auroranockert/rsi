@@ -1,4 +1,5 @@
-require 'xml/mapping'
+require 'nokogiri'
+require 'sax-machine'
 
 module RSI
   def self.fail! message
@@ -100,8 +101,18 @@ module RSI
       @machine.type_from_string(string)
     end
 
+    def get_xml(file)
+      f = Nokogiri::XML(File.read(file))
+
+      f.xpath('//module[@file]').each do |m|
+        m.replace(get_xml("#{@root}/#{m['file']}.xml").root)
+      end
+
+      f
+    end
+
     def parse(file)
-      RSI::Crate.load_from_file(file)
+      RSI::Crate.parse(self.get_xml(file).to_s)
     end
   end
 end

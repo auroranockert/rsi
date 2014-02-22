@@ -1,10 +1,8 @@
 module RSI
   class Library
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :library
-
-    text_node :name, '@name'
+    attribute :name
 
     def to_code(indent)
       a = RSI.indent("#[link(name = \"#{self.name}\")]", indent)

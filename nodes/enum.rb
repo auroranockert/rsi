@@ -1,11 +1,9 @@
 module RSI
   class EnumValue
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :value
-
-    text_node :name, '@name'
-    text_node :value, '@value'
+    attribute :name
+    attribute :value
 
     def to_code
       "#{self.name} = #{self.value}"
@@ -13,13 +11,16 @@ module RSI
   end
 
   class Enum
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :enum
+    attribute :name
+    attribute :representation
 
-    text_node :name, '@name'
-    text_node :representation, '@representation', default_value: 'i32'
-    array_node :values, 'value', class: RSI::EnumValue, default_value: []
+    elements :value, as: 'values', class: RSI::EnumValue
+
+    def representation
+      @representation || 'i32'
+    end
 
     def to_code(indent)
       a = RSI.indent("#[repr(#{self.representation})]", indent)

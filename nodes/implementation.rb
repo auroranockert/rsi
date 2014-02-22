@@ -1,23 +1,29 @@
 module RSI
   class Argument
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :argument
+    attribute :name
+    attribute :type
 
-    text_node :name, '@name', optional: true
-    text_node :ty, '@type', optional: true
+    attribute :pass_by
 
-    text_node :pass_by, '@pass_by', default_value: 'value'
+    attribute :value
+    attribute :transformer
 
-    text_node :value, '@value', optional: true
-    text_node :trans, '@transformer', optional: true
+    def pass_by
+      @pass_by || 'value'
+    end
 
-    def type
-      Context.type_from_string(self.ty)
+    def type= value
+      @type = Context.type_from_string(value)
     end
 
     def transformer
-      @transformer ||= RSI.argument_transformer_from_name(self.trans || 'identity', self)
+      @transformer ||= RSI.argument_transformer_from_name('identity', self)
+    end
+
+    def transformer= value
+      @transformer = RSI.argument_transformer_from_name(value, self)
     end
 
     def method_missing(message, *args)
@@ -26,24 +32,30 @@ module RSI
   end
 
   class Result
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :result
+    attribute :name
+    attribute :type
 
-    text_node :name, '@name', optional: true
-    text_node :ty, '@type', optional: true
+    attribute :pass_by
 
-    text_node :pass_by, '@pass_by', default_value: 'value'
+    attribute :value
+    attribute :transformer
 
-    text_node :value, '@value', optional: true
-    text_node :trans, '@transformer', optional: true
+    def pass_by
+      @pass_by || 'value'
+    end
 
-    def type
-      Context.type_from_string(self.ty)
+    def type= value
+      @type = Context.type_from_string(value)
     end
 
     def transformer
-      @transformer ||= RSI.result_transformer_from_name(self.trans || 'foreign', self)
+      @transformer ||= RSI.result_transformer_from_name('foreign', self)
+    end
+
+    def transformer= value
+      @transformer = RSI.result_transformer_from_name(value, self)
     end
 
     def method_missing(message, *args)
@@ -51,17 +63,22 @@ module RSI
     end
   end
 
-  class Method
-    include XML::Mapping
+  class Function
+    include SAXMachine
 
-    root_element_name :method
+    attribute :name
+    attribute :extern
+    attribute :foreign
 
-    text_node :name, '@name'
-    text_node :foreign, '@foreign'
-    boolean_node :extern, '@extern', 'true', 'false', default_value: true
+    attribute :value
+    attribute :transformer
 
-    array_node :arguments, 'argument', class: RSI::Argument, default_value: []
-    array_node :results, 'result', class: RSI::Result, default_value: []
+    elements :argument, as: 'arguments', class: RSI::Argument
+    elements :result, as: 'results', class: RSI::Result
+
+    def extern
+      @extern != 'false'
+    end
 
     def to_code(trait, indent)
       prototype_args = self.arguments.map { |a| a.to_rust_argument }.select { |a| a }.join(', ')
@@ -113,14 +130,12 @@ module RSI
   end
 
   class Implementation
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :implementation
+    attribute :for
+    attribute :trait
 
-    text_node :for, '@for'
-    text_node :trait, '@trait', default_value: nil
-
-    array_node :methods, 'method', class: RSI::Method, default_value: []
+    elements :method, as: 'functions', class: RSI::Function
 
     def for_type
       @type ||= RSI::StructType.new(self.for)
@@ -128,11 +143,11 @@ module RSI
 
     def to_code(indent)
       a = RSI.indent(self.trait ? "impl #{self.trait} for #{self.for} {" : "impl #{self.for} {", indent)
-      b = self.methods.map { |m| m.to_code(self.trait, indent + 1) }.join("\n")
+      b = self.functions.map { |m| m.to_code(self.trait, indent + 1) }.join("\n")
       c = RSI.indent("}", indent)
       d = "\n"
       e = RSI.indent("extern {", indent)
-      f = self.methods.map { |m| m.to_extern(indent + 1) }.select { |m| m }.join('')
+      f = self.functions.map { |m| m.to_extern(indent + 1) }.select { |m| m }.join('')
       g = RSI.indent("}", indent)
 
       a + b + c + d + e + f + g

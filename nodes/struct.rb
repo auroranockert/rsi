@@ -1,14 +1,12 @@
 module RSI
   class StructField
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :field
+    attribute :name
+    attribute :type
 
-    text_node :name, '@name'
-    text_node :ty, '@type'
-
-    def type
-      @type ||= Context.type_from_string(self.ty)
+    def type= value
+      @type = Context.type_from_string(value)
     end
 
     def to_code
@@ -17,13 +15,12 @@ module RSI
   end
 
   class Struct
-    include XML::Mapping
+    include SAXMachine
 
-    root_element_name :struct
+    attribute :name
+    attribute :opaque
 
-    text_node :name, '@name'
-    text_node :opaque, '@opaque', optional: true
-    array_node :fields, 'field', class: RSI::StructField, default_value: []
+    elements :field, as: 'fields', class: RSI::StructField
 
     def to_code(indent)
       if self.opaque
