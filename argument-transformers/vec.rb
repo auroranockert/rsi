@@ -40,14 +40,7 @@ module RSI::ArgumentTransformer
     end
 
     def uses(indent)
-      case self.argument.pass_by
-      when 'ref'
-        RSI.indent("use std::vec::ImmutableVector;", indent)
-      when 'mut-ref'
-        RSI.indent("use std::vec::MutableVector;", indent)
-      else
-        raise "Unknown pass_by #{self.argument.pass_by}"
-      end
+      nil
     end
 
     def to_preparation_code(indent)

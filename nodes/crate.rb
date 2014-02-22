@@ -31,7 +31,7 @@ module RSI
       contents.push(implementations) if implementations != ''
       contents.push(modules) if modules != ''
 
-      RSI.indent('use std;', 0) + "\n" + contents.join("\n")
+      contents.join("\n")
     end
   end
 end
