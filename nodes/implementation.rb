@@ -12,8 +12,12 @@ module RSI
 
     ancestor :function
 
+    def implementation
+      self.function.implementation
+    end
+
     def crate
-      self.function.implementation.module.crate
+      self.implementation.module.crate
     end
 
     def pass_by
@@ -21,7 +25,12 @@ module RSI
     end
 
     def type
-      self.crate.type_from_string(@type) if @type
+      case self.pass_by
+      when 'self', 'mut-self'
+        self.implementation.for
+      else
+        self.crate.type_from_string(@type) if @type
+      end
     end
 
     def transformer
@@ -153,8 +162,8 @@ module RSI
 
     ancestor :module
 
-    def for_type
-      @type ||= RSI::StructType.new(self.for)
+    def for
+      RSI::Type::Struct.new(@for)
     end
 
     def to_code(indent)
