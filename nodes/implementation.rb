@@ -92,6 +92,7 @@ module RSI
 
     text_node :name, '@name'
     text_node :foreign, '@foreign'
+    boolean_node :extern, '@extern', 'true', 'false', default_value: true
 
     array_node :arguments, 'argument', class: RSI::Argument, default_value: []
     array_node :results, 'result', class: RSI::Result, default_value: []
@@ -134,12 +135,14 @@ module RSI
     end
 
     def to_extern(indent)
-      prototype_args = self.arguments.map(&:to_c_argument).select { |a| a }.join(', ')
-      prototype_result = if r = self.results.find { |r| r.needs_foreign_result }
-        " -> #{r.to_c_result_type}"
-      end
+      if self.extern
+        prototype_args = self.arguments.map(&:to_c_argument).select { |a| a }.join(', ')
+        prototype_result = if r = self.results.find { |r| r.needs_foreign_result }
+          " -> #{r.to_c_result_type}"
+        end
 
-      a = RSI.indent("fn #{self.foreign}(#{prototype_args})#{prototype_result};", indent)
+        a = RSI.indent("fn #{self.foreign}(#{prototype_args})#{prototype_result};", indent)
+      end
     end
   end
 
@@ -163,7 +166,7 @@ module RSI
       c = RSI.indent("}", indent)
       d = "\n"
       e = RSI.indent("extern {", indent)
-      f = self.methods.map { |m| m.to_extern(indent + 1) }.join('')
+      f = self.methods.map { |m| m.to_extern(indent + 1) }.select { |m| m }.join('')
       g = RSI.indent("}", indent)
 
       a + b + c + d + e + f + g

@@ -112,7 +112,14 @@
   </implementation>
 
   <implementation trait='std::clone::Clone' for='Region'>
-    <method name='clone' foreign='cairo_region_copy'>
+    <method name='clone' foreign='cairo_region_reference'>
+      <argument type='{Region}' pass_by='self' transformer='opaque'/>
+      <result type='{Region}'/>
+    </method>
+  </implementation>
+
+  <implementation trait='std::clone::DeepClone' for='Region'>
+    <method name='deep_clone' foreign='cairo_region_copy'>
       <argument type='{Region}' pass_by='self' transformer='opaque'/>
       <result type='{Region}'/>
     </method>

@@ -45,6 +45,18 @@
     <value name='DeviceFinished' value='38'/>
   </enum>
 
+  <module name='antialias'>
+    <enum name='Antialias'>
+      <value name='Default' value='0'/>
+      <value name='None' value='1'/>
+      <value name='Gray' value='2'/>
+      <value name='Subpixel' value='3'/>
+      <value name='Fast' value='4'/>
+      <value name='Good' value='5'/>
+      <value name='Best' value='6'/>
+    </enum>
+  </module>
+
   <implementation for='Cairo'>
     <method name='new' foreign='cairo_create'>
       <argument name='surface' type='{surface::Surface}' pass_by='mut-ref' transformer='opaque'/>
@@ -438,6 +450,84 @@
       <result name='dx' type='double' transformer='out'/>
       <result name='dy' type='double' transformer='out'/>
     </method>
+
+    <!-- Text -->
+
+    <method name='select_font_face' foreign='cairo_select_font_face'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='family' type='string' pass_by='ref' transformer='cstring'/>
+      <argument name='slant' type='[font::slant::Slant]'/>
+      <argument name='weight' type='[font::weight::Weight]'/>
+    </method>
+
+    <method name='set_font_size' foreign='cairo_set_font_size'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='size' type='double'/>
+    </method>
+
+    <method name='set_font_matrix' foreign='cairo_set_font_matrix'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='size' type='[matrix::Matrix]' pass_by='ref'/>
+    </method>
+
+    <method name='get_font_matrix' foreign='cairo_get_font_matrix'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='matrix' type='[matrix::Matrix]' pass_by='mut-ref' transformer='zero'/>
+      <result name='matrix' type='[matrix::Matrix]' transformer='out'/>
+    </method>
+
+    <method name='set_font_options' foreign='cairo_set_font_options'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='options' type='[font::Options]'/>
+    </method>
+
+    <method name='get_font_options' foreign='cairo_get_font_options'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='options' type='[font::Options]'/>
+    </method>
+
+    <method name='set_font_face' foreign='cairo_set_font_face'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='font_face' type='[font::FontFace]'/>
+    </method>
+
+    <method name='get_font_face' foreign='cairo_get_font_face'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[font::FontFace]'/>
+    </method>
+
+    <method name='set_scaled_font' foreign='cairo_set_scaled_font'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='scaled_font' type='[font::ScaledFont]'/>
+    </method>
+
+    <method name='get_scaled_font' foreign='cairo_get_scaled_font'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='[font::ScaledFont]'/>
+    </method>
+
+    <method name='show_text' foreign='cairo_show_text'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='utf8' type='string' pass_by='ref'/>
+    </method>
+
+    <!-- cairo_show_glyphs -->
+    <!-- cairo_show_text_glyphs -->
+
+    <method name='font_extents' foreign='cairo_font_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='extents' type='[font::FontExtents]' pass_by='mut-ref' transformer='zero'/>
+      <result name='extents' type='[font::FontExtents]' transformer='out'/>
+    </method>
+
+    <method name='text_extents' foreign='cairo_text_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='utf8' type='string' pass_by='ref'/>
+      <argument name='extents' type='[font::TextExtents]' pass_by='mut-ref' transformer='zero'/>
+      <result name='extents' type='[font::TextExtents]' transformer='out'/>
+    </method>
+
+    <!-- cairo_glyph_extents -->
   </implementation>
 
   <implementation trait='std::clone::Clone' for='Cairo'>
@@ -458,8 +548,8 @@
   <module file='cairo/path'/>
   <module file='cairo/pattern'/>
   <module file='cairo/region'/>
+  <module file='cairo/font'/>
 
-  <!-- Text -->
   <!-- Raster Sources -->
 
   <module file='cairo/surface'/>
