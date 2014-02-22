@@ -68,6 +68,8 @@ module RSI
     case transformer
     when 'out'
       RSI::OutTransformer.new(arg)
+    when 'clone'
+      RSI::CloneTransformer.new(arg)
     when 'cstring'
       RSI::CStringTransformer.new(arg)
     when 'foreign'
@@ -177,6 +179,7 @@ require 'argument-transformers/identity'
 require 'argument-transformers/to-mut-ref'
 
 require 'result-transformers/out'
+require 'result-transformers/clone'
 require 'result-transformers/cstring'
 require 'result-transformers/foreign'
 
@@ -187,5 +190,7 @@ require 'nodes/module'
 require 'nodes/library'
 
 require 'nodes/crate'
+
+Root = File.dirname(ARGV[0])
 
 puts RSI::Crate.load_from_file(ARGV[0]).to_code

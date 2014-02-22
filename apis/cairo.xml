@@ -64,20 +64,30 @@
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_get_target -->
+    <method name='get_target' foreign='cairo_get_target'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{surface::Surface}' transformer='clone'/>
+    </method>
 
     <method name='push_group' foreign='cairo_push_group'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_push_group_with_content -->
+    <method name='push_group_with_content' foreign='cairo_push_group_with_content'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='content' type='[surface::content::Content]'/>
+    </method>
+
     <!-- cairo_pop_group -->
 
     <method name='pop_group_to_source' foreign='cairo_pop_group_to_source'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_get_group_target -->
+    <method name='get_group_target' foreign='cairo_get_group_target'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{surface::Surface}' transformer='clone'/>
+    </method>
 
     <method name='set_source_rgb' foreign='cairo_set_source_rgb'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -144,7 +154,18 @@
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_clip_extents -->
+    <method name='clip_extents' foreign='cairo_clip_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='x2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <result name='x1' type='double' transformer='out'/>
+      <result name='y1' type='double' transformer='out'/>
+      <result name='x2' type='double' transformer='out'/>
+      <result name='y2' type='double' transformer='out'/>
+    </method>
+
     <!-- cairo_in_clip -->
 
     <method name='reset_clip' foreign='cairo_reset_clip'>
@@ -159,10 +180,28 @@
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
+    <method name='fill_extents' foreign='cairo_fill_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='x2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <result name='x1' type='double' transformer='out'/>
+      <result name='y1' type='double' transformer='out'/>
+      <result name='x2' type='double' transformer='out'/>
+      <result name='y2' type='double' transformer='out'/>
+    </method>
+
     <!-- cairo_fill_extents -->
     <!-- cairo_in_fill -->
     <!-- cairo_mask -->
-    <!-- cairo_mask_surface -->
+
+    <method name='mask_surface' foreign='cairo_mask_surface'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='surface' type='{surface::Surface}' pass_by='mut-ref' transformer='opaque'/>
+      <argument name='surface_x' type='double'/>
+      <argument name='surface_y' type='double'/>
+    </method>
 
     <method name='paint' foreign='cairo_paint'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -181,19 +220,62 @@
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_stroke_extents -->
+    <method name='stroke_extents' foreign='cairo_stroke_extents'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y1' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='x2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y2' type='double' pass_by='mut-ref' transformer='zero'/>
+      <result name='x1' type='double' transformer='out'/>
+      <result name='y1' type='double' transformer='out'/>
+      <result name='x2' type='double' transformer='out'/>
+      <result name='y2' type='double' transformer='out'/>
+    </method>
+
     <!-- cairo_in_stroke -->
-    <!-- cairo_copy_page -->
-    <!-- cairo_show_page -->
-    <!-- cairo_get_reference_count -->
+
+    <method name='copy_page' foreign='cairo_copy_page'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <method name='show_page' foreign='cairo_show_page'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+    </method>
+
+    <method name='get_reference_count' foreign='cairo_get_reference_count'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='unsigned int'/>
+    </method>
+
     <!-- cairo_set_user_data -->
     <!-- cairo_get_user_data -->
 
     <!-- Paths -->
 
-    <!-- cairo_append_path -->
+    <method name='copy_path' foreign='cairo_copy_path'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{path::Path}'/>
+    </method>
+
+    <method name='copy_path_flat' foreign='cairo_copy_path_flat'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <result type='{path::Path}'/>
+    </method>
+
+    <method name='append_path' foreign='cairo_append_path'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='path' type='{path::Path}' pass_by='ref' transformer='opaque'/>
+    </method>
+
     <!-- cairo_has_current_point -->
-    <!-- cairo_get_current_point -->
+
+    <method name='get_current_point' foreign='cairo_get_current_point'>
+      <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double' pass_by='mut-ref' transformer='zero'/>
+      <argument name='y' type='double' pass_by='mut-ref' transformer='zero'/>
+      <result name='x' type='double' transformer='out'/>
+      <result name='y' type='double' transformer='out'/>
+    </method>
 
     <method name='new_path' foreign='cairo_new_path'>
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
@@ -325,10 +407,37 @@
       <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
     </method>
 
-    <!-- cairo_user_to_device -->
-    <!-- cairo_user_to_device_distance -->
-    <!-- cairo_device_to_user -->
-    <!-- cairo_device_to_user_distance -->
+    <method name='user_to_device' foreign='cairo_user_to_device'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double' transformer='to-mut-ref'/>
+      <argument name='y' type='double' transformer='to-mut-ref'/>
+      <result name='x' type='double' transformer='out'/>
+      <result name='y' type='double' transformer='out'/>
+    </method>
+
+    <method name='user_to_device_distance' foreign='cairo_user_to_device_distance'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='dx' type='double' transformer='to-mut-ref'/>
+      <argument name='dy' type='double' transformer='to-mut-ref'/>
+      <result name='dx' type='double' transformer='out'/>
+      <result name='dy' type='double' transformer='out'/>
+    </method>
+
+    <method name='device_to_user' foreign='cairo_device_to_user'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='x' type='double' transformer='to-mut-ref'/>
+      <argument name='y' type='double' transformer='to-mut-ref'/>
+      <result name='x' type='double' transformer='out'/>
+      <result name='y' type='double' transformer='out'/>
+    </method>
+
+    <method name='device_to_user_distance' foreign='cairo_device_to_user_distance'>
+      <argument type='{Cairo}' pass_by='mut-self' transformer='opaque'/>
+      <argument name='dx' type='double' transformer='to-mut-ref'/>
+      <argument name='dy' type='double' transformer='to-mut-ref'/>
+      <result name='dx' type='double' transformer='out'/>
+      <result name='dy' type='double' transformer='out'/>
+    </method>
   </implementation>
 
   <implementation trait='std::clone::Clone' for='Cairo'>
@@ -344,428 +453,15 @@
     </method>
   </implementation>
 
-  <module name='operator'>
-    <enum name='Operator'>
-      <value name='Clear' value='0'/>
+  <module file='cairo/operator'/>
 
-      <value name='Source' value='1'/>
-      <value name='Over' value='2'/>
-      <value name='In' value='3'/>
-      <value name='Out' value='4'/>
-      <value name='Atop' value='5'/>
+  <module file='cairo/path'/>
+  <module file='cairo/pattern'/>
 
-      <value name='Dest' value='6'/>
-      <value name='DestOver' value='7'/>
-      <value name='DestIn' value='8'/>
-      <value name='DestOut' value='9'/>
-      <value name='DestAtop' value='10'/>
+  <!-- Regions -->
+  <!-- Text -->
+  <!-- Raster Sources -->
 
-      <value name='Xor' value='11'/>
-      <value name='Add' value='12'/>
-      <value name='Saturate' value='13'/>
-
-      <value name='Multiply' value='14'/>
-      <value name='Screen' value='15'/>
-      <value name='Overlay' value='16'/>
-      <value name='Darken' value='17'/>
-      <value name='Lighten' value='18'/>
-      <value name='ColorDodge' value='19'/>
-      <value name='ColorBurn' value='20'/>
-      <value name='HardLight' value='21'/>
-      <value name='SoftLight' value='22'/>
-      <value name='Difference' value='23'/>
-      <value name='Exclusion' value='24'/>
-      <value name='HSLHue' value='25'/>
-      <value name='HSLSaturation' value='26'/>
-      <value name='HSLColor' value='27'/>
-      <value name='HSLLuminosity' value='28'/>
-    </enum>
-  </module>
-
-  <!-- TODO: A lot… -->
-
-  <module name='surface'>
-    <enum name='SVGVersion'>
-      <value name='SVGVersion_1_1' value='0' />
-      <value name='SVGVersion_1_2' value='1' />
-    </enum>
-
-    <struct name='Surface' opaque='true'/>
-    <struct name='Device' opaque='true'/>
-
-    <module name='device_type'>
-      <enum name='DeviceType'>
-        <value name='Invalid' value='-1'/>
-        <value name='DRM' value='0'/>
-        <value name='GL' value='1'/>
-        <value name='Script' value='2'/>
-        <value name='XCB' value='3'/>
-        <value name='XLIB' value='4'/>
-        <value name='XML' value='5'/>
-        <value name='COGL' value='6'/>
-        <value name='Win32' value='7'/>
-      </enum>
-    </module>
-
-    <module name='format'>
-      <enum name='Format'>
-        <value name='Invalid' value='-1'/>
-        <value name='ARGB32' value='0'/>
-        <value name='RGB24' value='1'/>
-        <value name='A8' value='2'/>
-        <value name='A1' value='3'/>
-        <value name='RGB16_565' value='4'/>
-        <value name='RGB30' value='5'/>
-      </enum>
-    </module>
-
-    <implementation for='Device'>
-      <method name='status' foreign='cairo_device_status'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-        <result type='[super::Status]'/>
-      </method>
-
-      <method name='finish' foreign='cairo_device_finish'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <method name='flush' foreign='cairo_device_flush'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <method name='get_type' foreign='cairo_device_get_type'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-        <result type='[device_type::DeviceType]'/>
-      </method>
-
-      <method name='reference_type' foreign='cairo_device_get_reference_count'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-        <result type='unsigned int'/>
-      </method>
-
-      <!-- cairo_device_set_user_data -->
-      <!-- cairo_device_get_user_data -->
-
-      <method name='acquire' foreign='cairo_device_acquire'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-        <result type='[super::Status]'/>
-      </method>
-
-      <method name='release' foreign='cairo_device_release'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-    </implementation>
-
-    <implementation trait='std::clone::Clone' for='Device'>
-      <method name='clone' foreign='cairo_device_reference'>
-        <argument type='{Device}' pass_by='self' transformer='opaque'/>
-        <result type='{Device}'/>
-      </method>
-    </implementation>
-
-    <implementation trait='std::ops::Drop' for='Device'>
-      <method name='drop' foreign='cairo_device_destroy'>
-        <argument type='{Device}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-    </implementation>
-
-    <implementation for='Surface'>
-      <!-- cairo_surface_create_similar -->
-
-      <method name='similar_image' foreign='cairo_surface_create_similar_image'>
-        <argument name='format' type='[format::Format]'/>
-        <argument name='width' type='int'/>
-        <argument name='height' type='int'/>
-        <result type='{Surface}'/>
-      </method>
-
-      <method name='for_rectangle' foreign='cairo_surface_create_for_rectangle'>
-        <argument name='x' type='double'/>
-        <argument name='y' type='double'/>
-        <argument name='width' type='double'/>
-        <argument name='height' type='double'/>
-        <result type='{Surface}'/>
-      </method>
-
-      <method name='status' foreign='cairo_surface_status'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <result type='[super::Status]'/>
-      </method>
-
-      <method name='finish' foreign='cairo_surface_finish'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <method name='flush' foreign='cairo_surface_flush'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <!-- cairo_surface_get_device -->
-      <!-- cairo_surface_get_font_options -->
-
-      <!-- cairo_surface_get_content -->
-
-      <method name='mark_dirty' foreign='cairo_surface_mark_dirty'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <method name='mark_dirty_rectangle' foreign='cairo_surface_mark_dirty_rectangle'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <argument name='x' type='double'/>
-        <argument name='y' type='double'/>
-        <argument name='width' type='double'/>
-        <argument name='height' type='double'/>
-      </method>
-
-      <method name='set_device_offset' foreign='cairo_surface_set_device_offset'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <argument name='x_offset' type='double'/>
-        <argument name='y_offset' type='double'/>
-      </method>
-
-      <method name='get_device_offset' foreign='cairo_surface_get_device_offset'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <argument name='x_offset' type='double' pass_by='mut-ref' transformer='zero'/>
-        <argument name='y_offset' type='double' pass_by='mut-ref' transformer='zero'/>
-        <result name='x_offset' type='double' transformer='out'/>
-        <result name='y_offset' type='double' transformer='out'/>
-      </method>
-
-      <method name='surface_set_fallback_resolution' foreign='cairo_surface_set_fallback_resolution'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <argument name='x_pixels_per_inch' type='double'/>
-        <argument name='y_pixels_per_inch' type='double'/>
-      </method>
-
-      <method name='get_fallback_resolution' foreign='cairo_surface_get_fallback_resolution'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <argument name='x_pixels_per_inch' type='double' pass_by='mut-ref' transformer='zero'/>
-        <argument name='y_pixels_per_inch' type='double' pass_by='mut-ref' transformer='zero'/>
-        <result name='x_pixels_per_inch' type='double' transformer='out'/>
-        <result name='y_pixels_per_inch' type='double' transformer='out'/>
-      </method>
-
-      <!-- cairo_surface_get_type -->
-
-      <method name='get_reference_count' foreign='cairo_surface_get_reference_count'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <result type='unsigned int'/>
-      </method>
-
-      <!-- cairo_surface_set_user_data -->
-      <!-- cairo_surface_get_user_data -->
-
-      <method name='copy_page' foreign='cairo_surface_copy_page'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <method name='show_page' foreign='cairo_surface_show_page'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-
-      <!-- cairo_surface_has_show_text_glyphs -->
-      <!-- cairo_surface_set_mime_data -->
-      <!-- cairo_surface_get_mime_data -->
-      <!-- cairo_surface_supports_mime_type -->
-      <!-- cairo_surface_map_to_image -->
-      <!-- cairo_surface_unmap_image -->
-
-      <!-- Image Surface -->
-
-      <!-- cairo_format_stride_for_width -->
-
-      <method name='image' foreign='cairo_image_surface_create'>
-        <argument name='format' type='[format::Format]'/>
-        <argument name='width' type='int'/>
-        <argument name='height' type='int'/>
-        <result type='{Surface}'/>
-      </method>
-
-      <!-- cairo_image_surface_create_for_data -->
-      <!-- cairo_image_surface_get_data -->
-
-      <method name='get_format' foreign='cairo_image_surface_get_format'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <result type='[format::Format]'/>
-      </method>
-
-      <method name='get_width' foreign='cairo_image_surface_get_width'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <result type='int'/>
-      </method>
-
-      <method name='get_height' foreign='cairo_image_surface_get_height'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <result type='int'/>
-      </method>
-
-      <method name='get_stride' foreign='cairo_image_surface_get_stride'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <result type='int'/>
-      </method>
-
-      <!-- PDF Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- PNG Surface -->
-
-      <method name='png' foreign='cairo_image_surface_create_from_png'>
-        <argument name='filename' type='string' pass_by='ref' transformer='cstring'/>
-        <result type='{Surface}'/>
-      </method>
-
-      <!-- cairo_image_surface_create_from_png_stream -->
-
-      <method name='to_png' foreign='cairo_surface_write_to_png'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-        <argument name='filename' type='string' pass_by='ref' transformer='cstring'/>
-        <result type='[super::Status]'/>
-      </method>
-
-      <!-- cairo_surface_write_to_png_stream -->
-
-      <!-- PostScript Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- Recording Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- Win32 Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- SVG Surface -->
-      <method name='svg' foreign='cairo_svg_surface_create'>
-        <argument name='filename' type='string' pass_by='ref' transformer='cstring'/>
-        <argument name='width' type='double'/>
-        <argument name='height' type='double'/>
-        <result type='{Surface}'/>
-      </method>
-
-      <!-- TODO: cairo_svg_surface_create_for_stream -->
-
-      <method name='restrict_to_svg_version' foreign='cairo_svg_surface_restrict_to_version'>
-        <argument type='{Surface}' pass_by='mut-self'/>
-        <argument name='version' type='[SVGVersion]'/>
-      </method>
-
-      <!-- TODO: cairo_svg_get_versions -->
-
-      <method name='svg_version_to_string' foreign='cairo_svg_version_to_string'>
-        <argument name='version' type='[SVGVersion]'/>
-        <result type='{std::c_str::CString}' transformer='cstring'/>
-      </method>
-
-      <!-- Quartz Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- XCB Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- XLib Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- XLib-XRender Surface -->
-      <!-- TODO: All missing -->
-
-      <!-- Script Surface -->
-      <!-- TODO: All missing -->
-    </implementation>
-
-    <implementation trait='std::clone::Clone' for='Surface'>
-      <method name='clone' foreign='cairo_surface_reference'>
-        <argument type='{Surface}' pass_by='self' transformer='opaque'/>
-        <result type='{Surface}'/>
-      </method>
-    </implementation>
-
-    <implementation trait='std::ops::Drop' for='Surface'>
-      <method name='drop' foreign='cairo_surface_destroy'>
-        <argument type='{Surface}' pass_by='mut-self' transformer='opaque'/>
-      </method>
-    </implementation>
-  </module>
-
-  <!-- Wraps cairo_matrix_t -->
-  <module name='matrix'>
-    <struct name='Matrix'>
-      <field name='xx' type='double'/>
-      <field name='yx' type='double'/>
-      <field name='xy' type='double'/>
-      <field name='yy' type='double'/>
-      <field name='x0' type='double'/>
-      <field name='y0' type='double'/>
-    </struct>
-
-    <implementation for='Matrix'>
-      <method name='new' foreign='cairo_matrix_init'>
-        <argument name='this' type='{Matrix}' pass_by='mut-ref' transformer='zero'/>
-        <argument name='xx' type='double'/>
-        <argument name='yx' type='double'/>
-        <argument name='xy' type='double'/>
-        <argument name='yy' type='double'/>
-        <argument name='x0' type='double'/>
-        <argument name='y0' type='double'/>
-        <result name='this' type='{Matrix}' transformer='out'/>
-      </method>
-      <method name='identity' foreign='cairo_matrix_init_identity'>
-        <argument name='this' type='{Matrix}' pass_by='mut-ref' transformer='zero'/>
-        <result name='this' type='{Matrix}' transformer='out'/>
-      </method>
-      <method name='for_translation' foreign='cairo_matrix_init_translate'>
-        <argument name='this' type='{Matrix}' pass_by='mut-ref' transformer='zero'/>
-        <argument name='x0' type='double'/>
-        <argument name='y0' type='double'/>
-        <result name='this' type='{Matrix}' transformer='out'/>
-      </method>
-      <method name='for_scale' foreign='cairo_matrix_init_scale'>
-        <argument name='this' type='{Matrix}' pass_by='mut-ref' transformer='zero'/>
-        <argument name='sx' type='double'/>
-        <argument name='sy' type='double'/>
-        <result name='this' type='{Matrix}' transformer='out'/>
-      </method>
-      <method name='for_rotation' foreign='cairo_matrix_init_rotate'>
-        <argument name='this' type='{Matrix}' pass_by='mut-ref' transformer='zero'/>
-        <argument name='radians' type='double'/>
-        <result name='this' type='{Matrix}' transformer='out'/>
-      </method>
-      <method name='multiply' foreign='cairo_matrix_multiply'>
-        <argument name='this' type='{Matrix}' pass_by='mut-ref' transformer='zero'/>
-        <argument name='a' pass_by='ref' type='{Matrix}'/>
-        <argument name='b' pass_by='ref' type='{Matrix}'/>
-        <result name='this' type='{Matrix}' transformer='out'/>
-      </method>
-      <method name='translate' foreign='cairo_matrix_translate'>
-        <argument type='{Matrix}' pass_by='mut-self'/>
-        <argument name='x0' type='double'/>
-        <argument name='y0' type='double'/>
-      </method>
-      <method name='scale' foreign='cairo_matrix_scale'>
-        <argument type='{Matrix}' pass_by='mut-self'/>
-        <argument name='sx' type='double'/>
-        <argument name='sy' type='double'/>
-      </method>
-      <method name='rotate' foreign='cairo_matrix_rotate'>
-        <argument type='{Matrix}' pass_by='mut-self'/>
-        <argument name='radians' type='double'/>
-      </method>
-      <method name='transform_distance' foreign='cairo_matrix_transform_distance'>
-        <argument type='{Matrix}' pass_by='self'/>
-        <argument name='dx' type='double' transformer='to-mut-ref'/>
-        <argument name='dy' type='double' transformer='to-mut-ref'/>
-        <result name='dx' type='double' transformer='out'/>
-        <result name='dy' type='double' transformer='out'/>
-      </method>
-      <method name='transform_point' foreign='cairo_matrix_transform_point'>
-        <argument type='{Matrix}' pass_by='self'/>
-        <argument name='x' type='double' transformer='to-mut-ref'/>
-        <argument name='y' type='double' transformer='to-mut-ref'/>
-        <result name='x' type='double' transformer='out'/>
-        <result name='y' type='double' transformer='out'/>
-      </method>
-      <method name='invert' foreign='cairo_matrix_invert'>
-        <argument type='{Matrix}' pass_by='self'/>
-        <result type='[super::Status]'/>
-      </method>
-    </implementation>
-  </module>
+  <module file='cairo/surface'/>
+  <module file='cairo/matrix'/>
 </crate>
