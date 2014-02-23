@@ -99,6 +99,10 @@ module RSI
       @extern != 'false'
     end
 
+    def foreign
+      @foreign || "#{self.implementation.prefix}#{self.name}"
+    end
+
     def print_code(indent)
       prototype_args = self.arguments.map { |a| a.to_rust_argument }.select { |a| a }.join(', ')
       prototype_result = case self.results.length
@@ -150,6 +154,7 @@ module RSI
 
     attribute :for
     attribute :trait
+    attribute :prefix
 
     elements :method, as: 'functions', class: RSI::Function
 
