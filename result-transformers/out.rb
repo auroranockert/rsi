@@ -1,11 +1,5 @@
-module RSI
-  class OutTransformer
-    attr_reader :result
-
-    def initialize(result)
-      @result = result
-    end
-
+module RSI::ResultTransformer
+  class Out < RSI::ResultTransformer::Transformer
     def needs_foreign_result
       false
     end
@@ -21,10 +15,6 @@ module RSI
       else
         "#{self.result.type}"
       end
-    end
-
-    def to_postparation_code(indent)
-      nil
     end
   end
 end

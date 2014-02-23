@@ -2,57 +2,6 @@ require 'nokogiri'
 require 'sax-machine'
 
 module RSI
-  def self.fail! message
-    $stderr.puts message
-    exit(1)
-  end
-
-  def self.indent(string, n)
-    "  " * n + string.gsub("\n", "\n" + "  " * n) + "\n"
-  end
-
-  def self.argument_transformer_from_name(transformer, arg)
-    case transformer
-    when 'identity'
-      RSI::ArgumentTransformer::Identity.new(arg)
-    when 'zero'
-      RSI::ArgumentTransformer::Zero.new(arg)
-    when 'opaque'
-      RSI::ArgumentTransformer::Opaque.new(arg)
-    when 'to-mut-ref'
-      RSI::ArgumentTransformer::ToMutRef.new(arg)
-    when 'from-mut-ref'
-      RSI::ArgumentTransformer::FromMutRef.new(arg)
-    when 'cstring'
-      RSI::ArgumentTransformer::CString.new(arg)
-    when 'vec'
-      RSI::ArgumentTransformer::Vec.new(arg)
-    when 'vec-zero'
-      RSI::ArgumentTransformer::VecZero.new(arg)
-    when 'vec-length'
-      RSI::ArgumentTransformer::VecLength.new(arg)
-    else
-      raise "Unknown transformer… #{transformer}"
-    end
-  end
-
-  def self.result_transformer_from_name(transformer, arg)
-    case transformer
-    when 'out'
-      RSI::OutTransformer.new(arg)
-    when 'clone'
-      RSI::CloneTransformer.new(arg)
-    when 'compare'
-      RSI::CompareTransformer.new(arg)
-    when 'cstring'
-      RSI::CStringTransformer.new(arg)
-    when 'foreign'
-      RSI::ForeignTransformer.new(arg)
-    else
-      raise "Unknown transformer… #{transformer}"
-    end
-  end
-
   class Machine # TODO: Implement non-amd64 support maybe?
     def type_from_string(type)
       case type
@@ -99,6 +48,7 @@ require 'types/string'
 require 'types/struct'
 require 'types/vec'
 
+require 'argument-transformers/transformer'
 require 'argument-transformers/zero'
 require 'argument-transformers/opaque'
 require 'argument-transformers/cstring'
@@ -108,6 +58,7 @@ require 'argument-transformers/vec'
 require 'argument-transformers/vec-zero'
 require 'argument-transformers/vec-length'
 
+require 'result-transformers/transformer'
 require 'result-transformers/out'
 require 'result-transformers/clone'
 require 'result-transformers/compare'
@@ -122,4 +73,4 @@ require 'nodes/library'
 
 require 'nodes/crate'
 
-puts RSI::Crate.from_rsi(ARGV[0], RSI::Machine.new).to_code
+RSI::Crate.from_rsi(ARGV[0], RSI::Machine.new, File.new(ARGV[1], 'w+')).print_code

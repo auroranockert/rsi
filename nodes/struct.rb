@@ -8,15 +8,19 @@ module RSI
     ancestor :struct
 
     def crate
-      self.struct.module.crate
+      self.struct.crate
     end
 
     def type
       self.crate.type_from_string(@type) if @type
     end
 
-    def to_code
-      "#{self.name}: #{self.type}"
+    def last?
+      self.struct.fields.last == self
+    end
+
+    def print_code(indent)
+      self.crate.print("#{self.name}: #{self.type}#{self.last? ? '' : ','}", indent)
     end
   end
 
@@ -29,21 +33,19 @@ module RSI
     elements :field, as: 'fields', class: RSI::StructField
 
     ancestor :module
+    
+    def crate
+      self.module.crate
+    end
 
-    def to_code(indent)
+    def print_code(indent)
+      self.crate.print("pub struct #{self.name} {", indent)
       if self.opaque
-        a = RSI.indent("pub struct #{self.name} {", indent)
-        b = RSI.indent("opaque: *mut std::libc::c_void", indent + 1)
-        c = RSI.indent("}", indent)
-
-        a + b + c
+        self.crate.print("opaque: *mut std::libc::c_void", indent + 1)
       else
-        a = RSI.indent("pub struct #{self.name} {", indent)
-        b = RSI.indent(self.fields.map(&:to_code).join(",\n"), indent + 1)
-        c = RSI.indent("}", indent)
-
-        a + b + c
+        self.fields.each { |f| f.print_code(indent + 1) }
       end
+      self.crate.print("}", indent)
     end
   end
 end

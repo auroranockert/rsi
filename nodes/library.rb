@@ -4,11 +4,11 @@ module RSI
 
     attribute :name
 
-    def to_code(indent)
-      a = RSI.indent("#[link(name = \"#{self.name}\")]", indent)
-      b = RSI.indent("extern {}", indent)
+    ancestor :crate
 
-      a + b
+    def print_code(indent)
+      self.crate.print("#[link(name = \"#{self.name}\")]", indent)
+      self.crate.print("extern {}", indent)
     end
   end
 end

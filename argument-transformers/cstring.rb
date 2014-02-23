@@ -1,11 +1,5 @@
 module RSI::ArgumentTransformer
-  class CString
-    attr_reader :argument
-
-    def initialize(argument)
-      @argument = argument
-    end
-
+  class CString < RSI::ArgumentTransformer::Transformer
     def to_rust_argument
       case self.argument.pass_by
       when 'ref'
@@ -29,11 +23,7 @@ module RSI::ArgumentTransformer
     end
 
     def uses(indent)
-      RSI.indent("use std::c_str::ToCStr;", indent)
-    end
-
-    def to_preparation_code(indent)
-      nil
+      self.crate.print("use std::c_str::ToCStr;", indent)
     end
   end
 end

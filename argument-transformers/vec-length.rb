@@ -1,15 +1,5 @@
 module RSI::ArgumentTransformer
-  class VecLength
-    attr_reader :argument
-
-    def initialize(argument)
-      @argument = argument
-    end
-
-    def to_rust_argument
-      nil
-    end
-
+  class VecLength < RSI::ArgumentTransformer::Transformer
     def to_c_argument
       case self.argument.pass_by
       when 'value'
@@ -21,14 +11,6 @@ module RSI::ArgumentTransformer
 
     def to_c_call_argument
       "#{self.argument.name}.len() as #{self.argument.type}"
-    end
-
-    def uses(indent)
-      nil
-    end
-
-    def to_preparation_code(indent)
-      nil
     end
   end
 end

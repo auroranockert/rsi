@@ -7,16 +7,24 @@ module RSI
 
     ancestor :enum
 
+    def crate
+      self.enum.crate
+    end
+
     def value
       @value ||= self.enum.next_value
     end
 
-    def to_code
+    def last?
+      self.enum.values.last == self
+    end
+
+    def print_code(indent)
       value = self.value
 
       self.enum.last_value = value.to_i
 
-      "#{self.name} = #{self.value}"
+      self.crate.print("#{self.name} = #{self.value}#{self.last? ? '' : ','}", indent)
     end
   end
 
@@ -27,6 +35,12 @@ module RSI
     attribute :representation
 
     elements :value, as: 'values', class: RSI::EnumValue
+
+    ancestor :module
+
+    def crate
+      self.module.crate
+    end
 
     def last_value
       @last_value ||= -1
@@ -44,13 +58,11 @@ module RSI
       @representation || 'i32'
     end
 
-    def to_code(indent)
-      a = RSI.indent("#[repr(#{self.representation})]", indent)
-      b = RSI.indent("pub enum #{self.name} {", indent)
-      c = RSI.indent(self.values.map(&:to_code).join(",\n"), indent + 1)
-      d = RSI.indent("}", indent)
-
-      a + b + c + d
+    def print_code(indent)
+      self.crate.print("#[repr(#{self.representation})]", indent)
+      self.crate.print("pub enum #{self.name} {", indent)
+      self.values.each { |v| v.print_code(indent + 1) }
+      self.crate.print("}", indent)
     end
   end
 end

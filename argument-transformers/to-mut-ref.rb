@@ -1,11 +1,5 @@
 module RSI::ArgumentTransformer
-  class ToMutRef
-    attr_reader :argument
-
-    def initialize(argument)
-      @argument = argument
-    end
-
+  class ToMutRef < RSI::ArgumentTransformer::Transformer
     def to_rust_argument
       case self.argument.pass_by
       when 'value'
@@ -23,12 +17,8 @@ module RSI::ArgumentTransformer
       "&mut #{self.argument.name}"
     end
 
-    def uses(indent)
-      nil
-    end
-
     def to_preparation_code(indent)
-      RSI.indent("let mut #{self.argument.name} = #{self.argument.name}_r;", indent)
+      self.crate.print("let mut #{self.argument.name} = #{self.argument.name}_r;", indent)
     end
   end
 end

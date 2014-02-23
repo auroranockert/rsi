@@ -16,16 +16,18 @@ module RSI
       self.module.crate
     end
 
-    def to_code(indent)
-      a = RSI.indent("pub mod #{self.name} {", indent) + RSI.indent('use std;', indent + 1) + "\n"
+    def print_code(indent)
+      self.crate.print("pub mod #{self.name} {", indent)
+      self.crate.print('use std;', indent + 1)
+      self.crate.print()
 
-      b = [self.enums, self.structs, self.implementations, self.modules].map do |c|
-        c.map { |m| m.to_code(indent + 1) }.join("\n")
-      end.select { |c| c != '' }.join("\n")
+      self.crate.print_list([self.enums, self.structs, self.implementations, self.modules]) do |c|
+        self.crate.print_list(c) do |m|
+          m.print_code(indent + 1)
+        end
+      end
 
-      c = RSI.indent("}", indent)
-
-      a + b + c
+      self.crate.print('}', indent)
     end
   end
 end

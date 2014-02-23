@@ -1,11 +1,5 @@
 module RSI::ArgumentTransformer
-  class Identity
-    attr_reader :argument
-
-    def initialize(argument)
-      @argument = argument
-    end
-
+  class Identity < RSI::ArgumentTransformer::Transformer
     def to_rust_argument
       unless self.argument.value
         case self.argument.pass_by
@@ -53,14 +47,6 @@ module RSI::ArgumentTransformer
           "#{self.argument.name}"
         end
       end
-    end
-
-    def uses(indent)
-      nil
-    end
-
-    def to_preparation_code(indent)
-      nil
     end
   end
 end

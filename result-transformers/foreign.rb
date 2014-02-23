@@ -1,15 +1,5 @@
-module RSI
-  class ForeignTransformer
-    attr_reader :result
-
-    def initialize(result)
-      @result = result
-    end
-
-    def needs_foreign_result
-      true
-    end
-
+module RSI::ResultTransformer
+  class Foreign < RSI::ResultTransformer::Transformer
     def to_rust_result
       case @result.pass_by
       when 'owned'
@@ -35,10 +25,6 @@ module RSI
       else
         "#{self.result.type}"
       end
-    end
-
-    def to_postparation_code(indent)
-      nil
     end
   end
 end

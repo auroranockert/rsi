@@ -1,11 +1,5 @@
 module RSI::ArgumentTransformer
-  class Opaque
-    attr_reader :argument
-
-    def initialize(argument)
-      @argument = argument
-    end
-
+  class Opaque < RSI::ArgumentTransformer::Transformer
     def to_rust_argument()
       case self.argument.pass_by
       when 'self'
@@ -49,14 +43,6 @@ module RSI::ArgumentTransformer
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
-    end
-
-    def uses(indent)
-      nil
-    end
-
-    def to_preparation_code(indent)
-      nil
     end
   end
 end

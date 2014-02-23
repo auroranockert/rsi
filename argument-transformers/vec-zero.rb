@@ -1,15 +1,5 @@
 module RSI::ArgumentTransformer
-  class VecZero
-    attr_reader :argument
-
-    def initialize(argument)
-      @argument = argument
-    end
-
-    def to_rust_argument
-      nil
-    end
-
+  class VecZero < RSI::ArgumentTransformer::Transformer
     def to_c_argument
       case @argument.pass_by
       when 'mut-ref'
@@ -24,17 +14,13 @@ module RSI::ArgumentTransformer
     end
 
     def uses(indent)
-      a = RSI.indent('use std::num::Zero;', indent)
-      b = RSI.indent("use std::vec::MutableVector;", indent)
-
-      a + b
+      self.crate.print('use std::num::Zero;', indent)
+      self.crate.print("use std::vec::MutableVector;", indent)
     end
 
     def to_preparation_code(indent)
-      a = RSI.indent("let #{self.argument.name}_len = #{self.argument.value} as uint;", indent)
-      b = RSI.indent("let mut #{self.argument.name}:~#{self.argument.type} = std::vec::from_elem(#{self.argument.name}_len, Zero::zero());", indent)
-
-      a + b
+      self.crate.print("let #{self.argument.name}_len = #{self.argument.value} as uint;", indent)
+      self.crate.print("let mut #{self.argument.name}:~#{self.argument.type} = std::vec::from_elem(#{self.argument.name}_len, Zero::zero());", indent)
     end
   end
 end
