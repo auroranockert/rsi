@@ -11,11 +11,21 @@ module RSI::ResultTransformer
     end
 
     def to_rust_result_type
-      nil
+      case self.result.pass_by
+      when 'owned'
+        "~#{self.result.type}"
+      else
+        "#{self.result.type}"
+      end
     end
 
     def to_c_result_type
-      nil
+      case @result.pass_by
+      when 'owned'
+        "*#{self.result.c_type}"
+      else
+        "#{self.result.c_type}"
+      end
     end
 
     def needs_foreign_result

@@ -7,6 +7,7 @@ module RSI
     elements :enum, as: 'enums', class: RSI::Enum
     elements :module, as: 'modules', class: RSI::Module
     elements :struct, as: 'structs', class: RSI::Struct
+    elements :gobject, as: 'gobjects', class: RSI::GObject
     elements :library, as: 'libraries', class: RSI::Library
     elements :implementation, as: 'implementations', class: RSI::Implementation
 
@@ -73,7 +74,7 @@ module RSI
         'zero' => RSI::ArgumentTransformer::Zero,
         'opaque' =>  RSI::ArgumentTransformer::Opaque,
         'cstring' => RSI::ArgumentTransformer::CString,
-        'identity' => RSI::ArgumentTransformer::Identity,
+        'identity' => RSI::ArgumentTransformer::Transformer,
         'to-mut-ref' => RSI::ArgumentTransformer::ToMutRef,
         'vec' => RSI::ArgumentTransformer::Vec,
         'vec-zero' => RSI::ArgumentTransformer::VecZero,
@@ -104,7 +105,7 @@ module RSI
     end
 
     def print_code
-      self.print_list([self.libraries, self.enums, self.structs, self.implementations, self.modules]) do |c|
+      self.print_list([self.libraries, self.enums, self.structs, self.gobjects, self.implementations, self.modules]) do |c|
         self.print_list(c) do |m|
           m.print_code(0)
         end

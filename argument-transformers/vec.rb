@@ -25,9 +25,9 @@ module RSI::ArgumentTransformer
     def to_c_call_argument
       case self.argument.pass_by
       when 'ref'
-        "#{self.argument.name}.as_ptr()"
+        "#{self.argument.value}.as_ptr()"
       when 'mut-ref'
-        "#{self.argument.name}.as_mut_ptr()"
+        "#{self.argument.value}.as_mut_ptr()"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end

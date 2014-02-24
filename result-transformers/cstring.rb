@@ -4,10 +4,6 @@ module RSI::ResultTransformer
       "std::c_str::CString::new(foreign_result, false)"
     end
 
-    def to_rust_result_type
-      "#{self.result.type}"
-    end
-
     def to_c_result_type
       "*i8"
     end

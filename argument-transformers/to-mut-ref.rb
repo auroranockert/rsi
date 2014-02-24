@@ -10,11 +10,11 @@ module RSI::ArgumentTransformer
     end
 
     def to_c_argument
-      "#{self.argument.name}: &mut #{self.argument.type}"
+      "#{self.argument.name}: &mut #{self.argument.c_type}"
     end
 
     def to_c_call_argument
-      "&mut #{self.argument.name}"
+      "&mut #{self.argument.value}"
     end
 
     def to_preparation_code(indent)

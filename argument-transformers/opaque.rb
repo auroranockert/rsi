@@ -1,6 +1,6 @@
 module RSI::ArgumentTransformer
   class Opaque < RSI::ArgumentTransformer::Transformer
-    def to_rust_argument()
+    def to_rust_argument
       case self.argument.pass_by
       when 'self'
         "&self"
@@ -17,13 +17,9 @@ module RSI::ArgumentTransformer
 
     def to_c_argument
       case self.argument.pass_by
-      when 'self'
-        'self_value: *std::libc::c_void'
-      when 'mut-self'
-        'self_value: *mut std::libc::c_void'
-      when 'ref'
+      when 'self', 'ref'
         "#{self.argument.name}: *std::libc::c_void"
-      when 'mut-ref'
+      when 'mut-self', 'mut-ref'
         "#{self.argument.name}: *mut std::libc::c_void"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
@@ -32,14 +28,10 @@ module RSI::ArgumentTransformer
 
     def to_c_call_argument
       case self.argument.pass_by
-      when 'self'
-        'self.opaque as *std::libc::c_void'
-      when 'mut-self'
-        'self.opaque'
-      when 'ref'
-        "#{self.argument.name}.opaque as *std::libc::c_void"
-      when 'mut-ref'
-        "#{self.argument.name}.opaque"
+      when 'self', 'ref'
+        "#{self.argument.value}.opaque as *std::libc::c_void"
+      when 'mut-self', 'mut-ref'
+        "#{self.argument.value}.opaque"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end

@@ -5,6 +5,8 @@ module RSI
   class Machine # TODO: Implement non-amd64 support maybe?
     def type_from_string(type)
       case type
+      when 'bool'
+        RSI::Type::Bool.new
       when 'i8', 'char'
         RSI::Type::Integer.new(true, 8)
       when 'i16', 'short'
@@ -42,6 +44,7 @@ end
 
 $:.unshift(File.dirname(__FILE__))
 
+require 'types/bool'
 require 'types/enum'
 require 'types/numeric'
 require 'types/string'
@@ -52,7 +55,6 @@ require 'argument-transformers/transformer'
 require 'argument-transformers/zero'
 require 'argument-transformers/opaque'
 require 'argument-transformers/cstring'
-require 'argument-transformers/identity'
 require 'argument-transformers/to-mut-ref'
 require 'argument-transformers/vec'
 require 'argument-transformers/vec-zero'
@@ -65,8 +67,13 @@ require 'result-transformers/compare'
 require 'result-transformers/cstring'
 require 'result-transformers/foreign'
 
+require 'nodes/argument'
+require 'nodes/result'
+require 'nodes/fn'
+
 require 'nodes/enum'
 require 'nodes/struct'
+require 'nodes/gobject'
 require 'nodes/implementation'
 require 'nodes/module'
 require 'nodes/library'

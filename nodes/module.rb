@@ -8,6 +8,7 @@ module RSI
     elements :enum, as: 'enums', class: RSI::Enum
     elements :module, as: 'modules', class: RSI::Module
     elements :struct, as: 'structs', class: RSI::Struct
+    elements :gobject, as: 'gobjects', class: RSI::GObject
     elements :implementation, as: 'implementations', class: RSI::Implementation
 
     ancestor :module
@@ -21,7 +22,7 @@ module RSI
       self.crate.print('use std;', indent + 1)
       self.crate.print()
 
-      self.crate.print_list([self.enums, self.structs, self.implementations, self.modules]) do |c|
+      self.crate.print_list([self.enums, self.structs, self.gobjects, self.implementations, self.modules]) do |c|
         self.crate.print_list(c) do |m|
           m.print_code(indent + 1)
         end

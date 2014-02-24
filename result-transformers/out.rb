@@ -7,14 +7,5 @@ module RSI::ResultTransformer
     def to_rust_result
       self.result.name
     end
-
-    def to_rust_result_type
-      case self.result.pass_by
-      when 'owned'
-        "~#{self.result.type}"
-      else
-        "#{self.result.type}"
-      end
-    end
   end
 end

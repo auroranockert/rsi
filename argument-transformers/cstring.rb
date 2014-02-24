@@ -19,7 +19,7 @@ module RSI::ArgumentTransformer
     end
 
     def to_c_call_argument
-      "#{self.argument.name}.to_c_str()"
+      "#{self.argument.value}.to_c_str()"
     end
 
     def uses(indent)
