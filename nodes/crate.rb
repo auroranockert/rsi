@@ -4,6 +4,7 @@ module RSI
 
     attribute :name
 
+    elements :fn, as: 'fns', class: RSI::Fn
     elements :enum, as: 'enums', class: RSI::Enum
     elements :module, as: 'modules', class: RSI::Module
     elements :struct, as: 'structs', class: RSI::Struct
@@ -25,8 +26,9 @@ module RSI
 
     def self.from_rsi(filename, machine, output)
       root = File.dirname(filename)
+      xml_string = self.get_xml(root, File.basename(filename)).to_s
 
-      self.parse(self.get_xml(root, File.basename(filename)).to_s).tap do |c|
+      self.parse(xml_string).tap do |c|
         c.root = root
         c.output = output
         c.machine = machine
@@ -76,6 +78,7 @@ module RSI
         'cstring' => RSI::ArgumentTransformer::CString,
         'identity' => RSI::ArgumentTransformer::Transformer,
         'to-mut-ref' => RSI::ArgumentTransformer::ToMutRef,
+        'gobject-self' => RSI::ArgumentTransformer::GObjectSelf,
         'vec' => RSI::ArgumentTransformer::Vec,
         'vec-zero' => RSI::ArgumentTransformer::VecZero,
         'vec-length' => RSI::ArgumentTransformer::VecLength
@@ -105,13 +108,20 @@ module RSI
     end
 
     def print_code
-      self.print_list([self.libraries, self.enums, self.structs, self.gobjects, self.implementations, self.modules]) do |c|
+      self.print_list([self.modules.select { |m| m.extern? }, self.libraries, self.enums, self.structs, self.fns, self.gobjects, self.implementations, self.modules.reject { |m| m.extern? }]) do |c|
         self.print_list(c) do |m|
           m.print_code(0)
         end
       end
-      
-      @output.truncate(@output.pos)
+
+      if self.fns.length > 0
+        self.print
+        self.print('extern {', 0)
+        self.fns.each { |f| f.print_extern(1) }
+        self.print('}', 0)
+      else
+        @output.truncate(@output.pos)
+      end
     end
   end
 end

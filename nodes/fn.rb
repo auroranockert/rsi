@@ -15,11 +15,11 @@ module RSI
     ancestor :ancestor
 
     def for
-      self.ancestor.for
+      self.ancestor.for rescue nil
     end
     
     def trait
-      self.ancestor.trait
+      self.ancestor.trait rescue nil
     end
 
     def crate

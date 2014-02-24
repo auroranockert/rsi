@@ -57,18 +57,14 @@ module RSI
       when 'self', 'mut-self'
         self.fn.for
       else
-        if self.as
-          self.as
-        else
-          if @type
-            if self.generic?
-              @type
-            else
-              self.crate.type_from_string(@type)
-            end
+        if @type
+          if self.generic?
+            @type
           else
-            raise "No type set… #{self.inspect}"
+            self.crate.type_from_string(@type)
           end
+        else
+          raise "No type set… #{self.inspect}"
         end
       end
     end
@@ -77,11 +73,27 @@ module RSI
       if self.generic?
         '*mut std::libc::c_void'
       else
-        self.type
+        if self.as
+          self.as
+        else
+          self.type
+        end
       end
     end
     
     def value
+      if self.generic?
+        "#{self.value_helper}.#{self.as_name(self.implements.first)}()"
+      else
+        self.value_helper
+      end
+    end
+
+    def as_name(name)
+      'as_' + name.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').downcase
+    end
+
+    def value_helper
       case self.pass_by
       when 'self', 'mut-self'
         'self'
