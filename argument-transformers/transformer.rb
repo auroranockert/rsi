@@ -9,12 +9,8 @@ module RSI::ArgumentTransformer
     def to_rust_argument
       unless self.argument.constant?
         case self.argument.pass_by
-        when 'value'
-          "#{self.argument.name}: #{self.argument.type}"
-        when 'ref'
-          "#{self.argument.name}: &#{self.argument.type}"
-        when 'mut-ref'
-          "#{self.argument.name}: &mut #{self.argument.type}"
+        when 'value', 'ref', 'mut-ref'
+          "#{self.argument.name}: #{self.to_rust_type}"
         when 'self'
           '&self'
         when 'mut-self'
@@ -25,16 +21,48 @@ module RSI::ArgumentTransformer
       end
     end
 
-    def to_c_argument
+    def to_rust_type
       case self.argument.pass_by
       when 'value'
-        "#{self.argument.name}: #{self.argument.c_type}"
-      when 'self', 'ref'
-        "#{self.argument.name}: *#{self.argument.c_type}"
-      when 'mut-self', 'mut-ref'
-        "#{self.argument.name}: *mut #{self.argument.c_type}"
+        "#{self.argument.type}"
+      when 'ref'
+        "&#{self.argument.type}"
+      when 'mut-ref'
+        "&mut #{self.argument.type}"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
+      end
+    end
+
+    def to_rust_call_argument
+      case self.argument.pass_by
+      when 'ref'
+        "std::cast::transmute(#{self.argument.value})"
+      when 'mut-ref'
+        "std::cast::transmute(#{self.argument.value})"
+      else
+        "#{self.argument.value}"
+      end
+    end
+
+    def to_c_argument
+      "#{self.argument.name}: #{self.to_c_type}"
+    end
+
+    def to_c_type
+      if self.argument.generic?
+        "#{self.argument.c_type}"
+      else
+        case self.argument.pass_by
+        when 'value'
+          "#{self.argument.c_type}"
+        when 'self', 'ref'
+          "*#{self.argument.c_type}"
+        when 'mut-self', 'mut-ref'
+          "*mut #{self.argument.c_type}"
+        else
+          raise "Unknown pass_by #{self.argument.pass_by}"
+        end
       end
     end
 
@@ -51,6 +79,14 @@ module RSI::ArgumentTransformer
     end
 
     def to_postparation_code(indent)
+      nil
+    end
+
+    def to_c_preparation_code(indent)
+      nil
+    end
+
+    def to_c_postparation_code(indent)
       nil
     end
   end

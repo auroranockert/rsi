@@ -8,6 +8,7 @@ module RSI
 
     attribute :pass_by
 
+    attribute :as
     attribute :value
     attribute :transformer
 
@@ -22,6 +23,14 @@ module RSI
     end
 
     def type
+      if self.as
+        self.as
+      else
+        self.crate.type_from_string(@type) if @type
+      end
+    end
+
+    def rust_type
       self.crate.type_from_string(@type) if @type
     end
 

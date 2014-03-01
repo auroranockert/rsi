@@ -1,25 +1,25 @@
 module RSI::ArgumentTransformer
   class CString < RSI::ArgumentTransformer::Transformer
-    def to_rust_argument
+    def to_rust_type
       case self.argument.pass_by
       when 'ref'
-        "#{self.argument.name}: &#{self.argument.type}"
+        "&#{self.argument.type}"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
     end
 
-    def to_c_argument
+    def to_c_type
       case self.argument.pass_by
       when 'ref'
-        "#{self.argument.name}: std::c_str::CString"
+        "*std::libc::c_char"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
     end
 
     def to_c_call_argument
-      "#{self.argument.value}.to_c_str()"
+      "#{self.argument.value}.to_c_str().unwrap()"
     end
 
     def uses(indent)

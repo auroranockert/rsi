@@ -29,7 +29,7 @@ module RSI
     end
 
     def pass_by
-      @pass_by || 'value'
+      @pass_by || (self.generic? ? 'mut-ref' : 'value')
     end
 
     def generic?

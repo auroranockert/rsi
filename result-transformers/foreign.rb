@@ -8,5 +8,9 @@ module RSI::ResultTransformer
         "foreign_result"
       end
     end
+
+    def to_c_result
+      @result.as ? "(foreign_result as #{@result.as})" : "foreign_result"
+    end
   end
 end

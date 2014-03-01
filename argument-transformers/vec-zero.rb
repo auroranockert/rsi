@@ -1,9 +1,9 @@
 module RSI::ArgumentTransformer
   class VecZero < RSI::ArgumentTransformer::Transformer
-    def to_c_argument
+    def to_c_type
       case @argument.pass_by
       when 'mut-ref'
-        "#{self.argument.name}: *mut #{self.argument.type.type}"
+        "*mut #{self.argument.type.type}"
       else
         raise "This pass-by doesn't make sense #{self.argument.pass_by}"
       end

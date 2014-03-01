@@ -5,9 +5,13 @@ module RSI::ArgumentTransformer
     end
     
     def to_c_argument
+      "#{self.argument.name}_length: #{self.to_c_type}"
+    end
+
+    def to_c_type
       case self.argument.pass_by
       when 'value'
-        "#{self.argument.name}_length: #{self.argument.c_type}"
+        "#{self.argument.c_type}"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end

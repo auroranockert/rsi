@@ -1,22 +1,22 @@
 module RSI::ArgumentTransformer
   class Vec < RSI::ArgumentTransformer::Transformer
-    def to_rust_argument
+    def to_rust_type
       case self.argument.pass_by
       when 'ref'
-        "#{self.argument.name}: &#{self.argument.type}"
+        "&#{self.argument.type}"
       when 'mut-ref'
-        "#{self.argument.name}: &mut #{self.argument.type}"
+        "&mut #{self.argument.type}"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end
     end
 
-    def to_c_argument
+    def to_c_type
       case self.argument.pass_by
       when 'ref'
-        "#{self.argument.name}: *#{self.argument.type.type}"
+        "*#{self.argument.type.type}"
       when 'mut-ref'
-        "#{self.argument.name}: *mut #{self.argument.type.type}"
+        "*mut #{self.argument.type.type}"
       else
         raise "Unknown pass_by #{self.argument.pass_by}"
       end

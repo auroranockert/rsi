@@ -8,6 +8,8 @@ module RSI::Type
 
     def to_s
       case self.bits
+      when :size_t
+        self.signed ? 'int' : 'uint'
       when 64
         self.signed ? 'i64' : 'u64'
       when 32

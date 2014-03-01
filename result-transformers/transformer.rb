@@ -13,9 +13,9 @@ module RSI::ResultTransformer
     def to_rust_result_type
       case self.result.pass_by
       when 'owned'
-        "~#{self.result.type}"
+        "~#{self.result.rust_type}"
       else
-        "#{self.result.type}"
+        "#{self.result.rust_type}"
       end
     end
 
@@ -41,6 +41,14 @@ module RSI::ResultTransformer
     end
 
     def to_postparation_code(indent)
+      nil
+    end
+
+    def to_c_preparation_code(indent)
+      nil
+    end
+
+    def to_c_postparation_code(indent)
       nil
     end
   end

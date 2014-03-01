@@ -1,16 +1,11 @@
 module RSI::ArgumentTransformer
   class ToMutRef < RSI::ArgumentTransformer::Transformer
     def to_rust_argument
-      case self.argument.pass_by
-      when 'value'
-        "#{self.argument.name}_r: #{self.argument.type}"
-      else
-        raise "Unknown pass_by #{self.argument.pass_by}"
-      end
+      "#{self.argument.name}_r: #{self.to_rust_type}"
     end
 
-    def to_c_argument
-      "#{self.argument.name}: &mut #{self.argument.c_type}"
+    def to_c_type
+      "&mut #{self.argument.c_type}"
     end
 
     def to_c_call_argument

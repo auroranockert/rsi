@@ -4,8 +4,8 @@ module RSI::ArgumentTransformer
       nil
     end
     
-    def to_c_argument
-      "#{self.argument.name}: *mut #{self.argument.c_type}"
+    def to_c_type
+      "*mut #{self.argument.c_type}"
     end
 
     def to_c_call_argument

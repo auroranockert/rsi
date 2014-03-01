@@ -23,6 +23,10 @@ module RSI
         RSI::Type::Integer.new(true, 32)
       when 'u64', 'unsigned long'
         RSI::Type::Integer.new(true, 64)
+      when 'size_t'
+        RSI::Type::Integer.new(false, :size_t)
+      when 'ssize_t'
+        RSI::Type::Integer.new(true, :size_t)
       when 'f32', 'single', 'float'
         RSI::Type::Float.new(32)
       when 'f64', 'double'
@@ -56,7 +60,7 @@ require 'argument-transformers/zero'
 require 'argument-transformers/opaque'
 require 'argument-transformers/cstring'
 require 'argument-transformers/to-mut-ref'
-require 'argument-transformers/gobject-self'
+require 'argument-transformers/gobject'
 require 'argument-transformers/vec'
 require 'argument-transformers/vec-zero'
 require 'argument-transformers/vec-length'

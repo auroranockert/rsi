@@ -6,9 +6,6 @@ module RSI
     attribute :extern
     attribute :foreign
 
-    attribute :value
-    attribute :transformer
-
     elements :argument, as: 'arguments', class: RSI::Argument
     elements :result, as: 'results', class: RSI::Result
 

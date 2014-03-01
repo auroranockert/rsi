@@ -78,7 +78,7 @@ module RSI
         'cstring' => RSI::ArgumentTransformer::CString,
         'identity' => RSI::ArgumentTransformer::Transformer,
         'to-mut-ref' => RSI::ArgumentTransformer::ToMutRef,
-        'gobject-self' => RSI::ArgumentTransformer::GObjectSelf,
+        'gobject' => RSI::ArgumentTransformer::GObject,
         'vec' => RSI::ArgumentTransformer::Vec,
         'vec-zero' => RSI::ArgumentTransformer::VecZero,
         'vec-length' => RSI::ArgumentTransformer::VecLength
