@@ -10,6 +10,10 @@ module RSI::Type
       @parent = parent
     end
 
+    def out_uses
+      ['std::num::Zero', 'std::vec::MutableVector']
+    end
+
     def path
       self.element.path
     end
@@ -18,12 +22,28 @@ module RSI::Type
       @element ||= @parent.context.lookup_type(@parent.node['element'], @parent)
     end
 
+    def out_prelude
+      @parent.render('function/prelude/vec-out')
+    end
+    
+    def out_as_foreign_argument
+      "#{@parent.name}.as_mut_ptr()"
+    end
+
     def pass_by_ref?
       true
     end
 
     def as_native_argument_prototype(relative)
       "[#{self.lookup_relative(relative)}]"
+    end
+
+    def as_native_result_prototype(relative)
+      "~[#{self.lookup_relative(relative)}]"
+    end
+
+    def as_native_result(name, relative)
+      "#{name}"
     end
 
     def as_foreign_argument_prototype(arg)
@@ -35,7 +55,11 @@ module RSI::Type
     end
 
     def as_foreign_argument(arg)
-      "#{arg.name}.as_ptr()"
+      if arg.immutable?
+        "#{arg.name}.as_ptr()"
+      else
+        "#{arg.name}.as_mut_ptr()"
+      end
     end
 
     def as_foreign_result_prototype(relative)

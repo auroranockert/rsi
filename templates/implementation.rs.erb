@@ -3,5 +3,5 @@ impl <%= self.trait %> for <%= self.parent.name %> {
 }
 
 extern {
-<%= self.functions.map { |fn| "  #{fn.to_extern}" }.join("\n") %>
+<%= self.functions.map { |fn| fn.to_extern }.join("\n") %>
 }

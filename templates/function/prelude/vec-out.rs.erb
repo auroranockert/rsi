@@ -1,0 +1,2 @@
+let <%= self.name %>_len = self.<%= self.node['length'] %>() as uint;
+let mut <%= self.name %>:~[<%= self.type.lookup_relative(self.path) %>] = std::vec::from_elem(<%= self.name %>_len, Zero::zero());

@@ -49,7 +49,7 @@ module RSI
     def render(filename, indent = 0)
       t = ERB.new(File.read("#{Root}/templates/#{filename}.rs.erb"), nil, ">-")
       t.filename = "#{Root}/templates/#{filename}.rs.erb"
-      t.result(binding).gsub(/^/, "  " * indent)
+      t.result(binding).indent(indent)
     end
   end
 
@@ -224,6 +224,10 @@ class String
     gsub(/([a-z\d])([A-Z])/,'\1_\2').
     tr("-", "_").
     downcase
+  end
+
+  def indent(indent)
+    self.gsub(/^/, "  " * indent)
   end
 end
 

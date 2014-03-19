@@ -52,11 +52,15 @@ module RSI
     end
 
     def prelude
-      nil
+      if self.type.respond_to? :prelude
+        self.type.prelude
+      end
     end
 
     def postlude
-      nil
+      if self.type.respond_to? :postlude
+        self.type.prelude
+      end
     end
 
     def foreign_result
@@ -135,12 +139,24 @@ module RSI
       super(name, type)
     end
 
+    def uses
+      if self.type.respond_to? :out_uses
+        self.type.out_uses
+      else
+        super
+      end
+    end
+
     def to_foreign_prototype
       self.render('function/foreign-prototype/out')
     end
 
     def to_foreign_argument
-      self.render('function/foreign-call/out')
+      if self.type.respond_to? :out_as_foreign_argument
+        self.type.out_as_foreign_argument
+      else
+        self.render('function/foreign-call/out')
+      end
     end
 
     def to_native_result
@@ -148,7 +164,11 @@ module RSI
     end
 
     def prelude
-      self.render('function/prelude/out')
+      if self.type.respond_to? :out_prelude
+        self.type.out_prelude
+      else
+        self.render('function/prelude/out')
+      end
     end
 
     def inspect
@@ -221,7 +241,7 @@ module RSI
     end
 
     def to_code
-      self.render('function/function', 0)
+      self.render('function/function', 1)
     end
 
     def to_extern

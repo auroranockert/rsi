@@ -8,7 +8,7 @@ pub struct <%= self.name %> {
 
 
 impl <%= self.name %> {
-<%= self.functions.map { |fn| fn.to_code }.map { |fn| "  pub #{fn}" }.join("\n\n") %>
+<%= self.functions.map { |fn| fn.to_code }.map { |fn| "  pub #{fn.lstrip}" }.join("\n\n") %>
 }
 
 extern {
