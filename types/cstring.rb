@@ -23,6 +23,18 @@ module RSI::Type
     def as_foreign_argument
       "#{super}.to_c_str().unwrap()" # TODO: Error check?
     end
+    
+    def as_foreign_result_prototype
+      'i8'
+    end
+
+    def as_native_result
+      "std::c_str::CString::new(#{self.parent.name}, false).as_str().unwrap().to_owned()"
+    end
+
+    def as_native_result_prototype
+      '~str'
+    end
 
     def inspect
       "CString { }"
