@@ -190,13 +190,47 @@ module RSI
     end
   end
 
+  class FunctionInOut < FunctionParameter
+    def prefix
+      'inout'
+    end
+
+    def as_foreign_prototype
+      self.render('function/foreign-prototype/out')
+    end
+
+    def as_foreign_argument
+      self.render('function/foreign-call/out')
+    end
+
+    def as_native_prototype
+      self.render('function/native-prototype/argument')
+    end
+
+    def as_native_result_prototype
+      self.render('function/native-prototype-result/result')
+    end
+
+    def as_native_result
+      self.render('function/native-result/out')
+    end
+
+    def default_prelude
+      self.render('function/prelude/inout')
+    end
+
+    def inspect
+      "FunctionOut { name: #{self.name.inspect}, type: #{self.type.inspect} }"
+    end
+  end
+
   class Function < RSI::Node
     attr_reader :name, :foreign
 
     def prepare
       @name, @foreign, @extern = @node['name'], @node['foreign'] || (@parent.prefix + @node['name']), (@node['extern'] != 'false')
 
-      self.create_children(arg: RSI::FunctionArgument, self: RSI::FunctionSelf, result: RSI::FunctionResult, out: RSI::FunctionOut)
+      self.create_children(arg: RSI::FunctionArgument, self: RSI::FunctionSelf, result: RSI::FunctionResult, out: RSI::FunctionOut, inout: RSI::FunctionInOut)
 
       case self.node.name
       when 'constructor'
