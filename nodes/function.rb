@@ -1,16 +1,12 @@
 module RSI
   class FunctionParameter < RSI::Node
-    attr_accessor :name, :type
+    attr_accessor :name, :type, :immutable
 
     def prepare(name = nil, type = nil)
       @name = name || @node.try(:[], 'name')
       @type, @type_name = type, @node.try(:[], 'type')
       @immutable = (@node.try(:[], 'immutable') == 'true')
       @pass_by = @node.try(:[], 'pass-by')
-    end
-
-    def uses
-      self.type.uses
     end
 
     def type
@@ -31,46 +27,66 @@ module RSI
       @immutable
     end
 
-    def pass_by
-      @pass_by || (self.type.pass_by_ref? ? 'ref' : 'value')
+    def to_native_prototype
+      self.type.try_or("#{self.prefix}_as_native_prototype") do
+        self.try(:as_native_prototype)
+      end
     end
 
-    def pass_by_ref?
-      self.pass_by == 'ref'
-    end
-
-    def pass_by_value?
-      self.pass_by == 'value'
-    end
-
-    def to_foreign_argument
-      nil
+    def to_native_result
+      self.type.try_or("#{self.prefix}_as_native_result") do
+        self.try(:as_native_result)
+      end
     end
 
     def to_foreign_prototype
-      nil
+      self.type.try_or("#{self.prefix}_as_foreign_prototype") do
+        self.try(:as_foreign_prototype)
+      end
+    end
+
+    def to_foreign_argument
+      self.type.try_or("#{self.prefix}_as_foreign_argument") do
+        self.try(:as_foreign_argument)
+      end
+    end
+
+    def to_foreign_result
+      self.type.try_or("#{self.prefix}_as_foreign_result") do
+        self.try(:as_foreign_result)
+      end
+    end
+
+    def uses
+      self.type.try_or("#{self.prefix}_uses") do
+        self.type.try(:uses)
+      end
     end
 
     def prelude
-      if self.type.respond_to? :prelude
-        self.type.prelude
+      self.type.try_or("#{self.prefix}_prelude") do
+        self.type.try_or(:prelude) do
+          self.try(:default_prelude)
+        end
       end
     end
 
     def postlude
-      if self.type.respond_to? :postlude
-        self.type.prelude
+      self.type.try_or("#{self.prefix}_postlude") do
+        self.type.try_or(:postlude) do
+          self.try(:default_postlude)
+        end
       end
-    end
-
-    def foreign_result
-      nil
     end
   end
 
   class FunctionArgument < FunctionParameter
-    def to_native_prototype
-      self.render('function/native-prototype/argument') unless self.type.foreign_only?
+    def prefix
+      'arg'
+    end
+
+    def as_native_prototype
+      self.render('function/native-prototype/argument')
     end
 
     def to_foreign_prototype
@@ -86,23 +102,25 @@ module RSI
     end
   end
 
-  class FunctionSelf < FunctionArgument
-    attr_accessor :immutable
-
+  class FunctionSelf < FunctionParameter
     def prepare(type = nil)
       super('self', type)
     end
 
-    def immutable?
-      @immutable
+    def prefix
+      'self'
     end
 
-    def to_native_prototype
+    def as_native_prototype
       self.render('function/native-prototype/self')
     end
 
-    def to_foreign_prototype
+    def as_foreign_prototype
       self.render('function/foreign-prototype/self')
+    end
+
+    def as_foreign_argument
+      self.render('function/foreign-call/argument')
     end
 
     def inspect
@@ -115,15 +133,15 @@ module RSI
       super(name || 'foreign_result', type)
     end
 
+    def prefix
+      'result'
+    end
+
     def foreign_result
       self.name
     end
 
-    def to_foreign_argument
-      nil
-    end
-
-    def to_native_result
+    def as_native_result
       self.render('function/native-result/result')
     end
 
@@ -133,18 +151,12 @@ module RSI
   end
 
   class FunctionOut < FunctionParameter
-    attr_accessor :name
-
     def prepare(name = nil, type = nil)
       super(name, type)
     end
 
-    def uses
-      if self.type.respond_to? :out_uses
-        self.type.out_uses
-      else
-        super
-      end
+    def prefix
+      'out'
     end
 
     def to_foreign_prototype
@@ -163,12 +175,8 @@ module RSI
       self.render('function/native-result/out')
     end
 
-    def prelude
-      if self.type.respond_to? :out_prelude
-        self.type.out_prelude
-      else
-        self.render('function/prelude/out')
-      end
+    def default_prelude
+      self.render('function/prelude/out')
     end
 
     def inspect

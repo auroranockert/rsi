@@ -18,8 +18,8 @@ module RSI::Type
       @element ||= @parent.context.lookup_type(@parent.node['element'], @parent)
     end
 
-    def foreign_only?
-      true
+    def arg_as_native_prototype
+      nil
     end
 
     def as_foreign_argument_prototype(arg)

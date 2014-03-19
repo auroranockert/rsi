@@ -2,7 +2,7 @@ fn <%= self.name %>(<%= self.arguments.map { |a| a.to_native_prototype }.compact
   unsafe {
 <%= self.children.map { |c| c.uses }.flatten.map { |p| "use #{p};\n".indent(2) }.join -%>
 <%= self.children.map { |c| c.prelude }.compact.map { |p| "#{p}\n".indent(2) }.join -%>
-    <%= (n = self.children.find { |x| x.foreign_result }) ? "let #{n.foreign_result} = " : '' %><%= self.foreign %>(<%= self.children.map { |c| c.to_foreign_argument }.compact.join(", ") %>);
+    <%= (n = self.children.find { |x| x.try(:foreign_result) }) ? "let #{n.foreign_result} = " : '' %><%= self.foreign %>(<%= self.children.map { |c| c.to_foreign_argument }.compact.join(", ") %>);
 <% case self.results.length
    when 0 -%>
 <% when 1 -%>

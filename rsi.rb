@@ -61,10 +61,6 @@ module RSI
         []
       end
 
-      def foreign_only?
-        false
-      end
-
       def as_struct_field(relative)
         self.lookup_relative(relative)
       end
@@ -214,6 +210,14 @@ end
 class Object
   def try(method, *a, &b)
     public_send(method, *a, &b) if self.respond_to?(method)
+  end
+
+  def try_or(method, *a)
+    if self.respond_to? method
+      public_send(method, *a)
+    else
+      yield
+    end
   end
 end
 
