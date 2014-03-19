@@ -220,7 +220,29 @@ module RSI
     end
 
     def inspect
-      "FunctionOut { name: #{self.name.inspect}, type: #{self.type.inspect} }"
+      "FunctionInOut { name: #{self.name.inspect}, type: #{self.type.inspect} }"
+    end
+  end
+
+  class FunctionConstant < FunctionParameter
+    def prefix
+      'constant'
+    end
+
+    def value
+      self.node['value']
+    end
+
+    def as_foreign_prototype
+      self.render('function/foreign-prototype/argument')
+    end
+
+    def as_foreign_argument
+      self.render('function/foreign-call/constant')
+    end
+
+    def inspect
+      "FunctionConstant { name: #{self.name.inspect}, value: #{self.value.inspect} }"
     end
   end
 
@@ -230,7 +252,7 @@ module RSI
     def prepare
       @name, @foreign, @extern = @node['name'], @node['foreign'] || (@parent.prefix + @node['name']), (@node['extern'] != 'false')
 
-      self.create_children(arg: RSI::FunctionArgument, self: RSI::FunctionSelf, result: RSI::FunctionResult, out: RSI::FunctionOut, inout: RSI::FunctionInOut)
+      self.create_children(arg: RSI::FunctionArgument, self: RSI::FunctionSelf, result: RSI::FunctionResult, out: RSI::FunctionOut, inout: RSI::FunctionInOut, constant: RSI::FunctionConstant)
 
       case self.node.name
       when 'constructor'
