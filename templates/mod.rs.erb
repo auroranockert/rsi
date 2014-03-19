@@ -1,0 +1,9 @@
+<% if self.extern? -%>
+extern mod <%= self.name %>;
+<% else -%>
+pub mod <%= self.name %> {
+  use std;
+
+<%= self.children.map { |c| c.to_code(1) }.join("\n\n") %>
+}
+<% end -%>

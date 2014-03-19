@@ -1,0 +1,1 @@
+<%= self.name %>: <%= (self.immutable? ? '&' : '&mut ') if self.pass_by_ref? %><%= self.type.as_native_argument_prototype(self.path) %>

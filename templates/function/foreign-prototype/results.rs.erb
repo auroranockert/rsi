@@ -1,0 +1,1 @@
+<% if r = self.results.find { |r| RSI::FunctionResult === r } %> -> <%= (r.immutable? ? '*' : '*mut ') if r.type.pass_by_ref? %><%= r.type.as_foreign_result_prototype(self.path) %><% end %>

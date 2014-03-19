@@ -1,0 +1,1 @@
+fn <%= self.foreign %>(<%= self.children.map { |a| a.to_foreign_prototype }.compact.join(', ') %>)<%= self.render('function/foreign-prototype/results') %>;

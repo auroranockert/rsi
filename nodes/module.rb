@@ -1,22 +1,27 @@
 module RSI
-  class Module
-    include SAXMachine
+  class Module < RSI::Context
+    def initialize(context, parent, node)
+      @document, @dirname = *context.find_rsi(node['file'], parent.dirname)
 
-    attribute :name
-    attribute :file
-    attribute :extern
+      @context, @parent, @node = context, parent, @document.at_xpath('/mod')
 
-    elements :use, as: 'uses', class: RSI::Use
-    elements :enum, as: 'enums', class: RSI::Enum
-    elements :module, as: 'modules', class: RSI::Module
-    elements :struct, as: 'structs', class: RSI::Struct
-    elements :gobject, as: 'gobjects', class: RSI::GObject
-    elements :implementation, as: 'implementations', class: RSI::Implementation
+      self.prepare
+    end
+    
+    def dirname
+      @dirname
+    end
 
-    ancestor :module
+    def find_rsi(*args)
+      self.context.find_rsi(*args)
+    end
 
-    def crate
-      self.module.crate
+    def path
+      "#{self.parent.name}::#{self.name}"
+    end
+
+    def types
+      self.context.types
     end
 
     def extern
@@ -27,23 +32,17 @@ module RSI
       self.extern == 'true'
     end
 
-    def print_code(indent)
-      if self.extern?
-        self.crate.print("extern mod #{self.name};")
-      else
-        self.crate.print("pub mod #{self.name} {", indent)
-        self.crate.print('use std;', indent + 1)
-        self.uses.each { |u| u.print_code(indent + 1) }
-        self.crate.print()
+    def to_code
+      output, directory = self.render('mod'), "#{self.context.output}/#{self.name}"
 
-        self.crate.print_list([self.enums, self.structs, self.gobjects, self.implementations, self.modules]) do |c|
-          self.crate.print_list(c) do |m|
-            m.print_code(indent + 1)
-          end
-        end
-
-        self.crate.print('}', indent)
-      end
+      # FileUtils.mkdir_p(directory)
+      # File.open("#{directory}/mod.rs", 'w+') do |f|
+      #   f.write(output.each_line.map { |x| x.chomp }.join("\n"))
+      # end
+      #
+      # "pub mod #{self.name};"
+      
+      output
     end
   end
 end

@@ -1,68 +1,63 @@
 module RSI
-  class EnumValue
-    include SAXMachine
+  class EnumValue < RSI::Node
+    attr_reader :name
 
-    attribute :name
-    attribute :value
-
-    ancestor :enum
-
-    def crate
-      self.enum.crate
+    def prepare
+      @name, @value = @node['name'], @node['value']
     end
 
     def value
-      @value ||= self.enum.next_value
-    end
-
-    def last?
-      self.enum.values.last == self
-    end
-
-    def print_code(indent)
-      value = self.value
-
-      self.enum.last_value = value.to_i
-
-      self.crate.print("#{self.name} = #{self.value}#{self.last? ? '' : ','}", indent)
+      if @value
+        Integer(@value)
+      elsif p = self.previous_sibling
+        p.value + 1
+      else
+        0
+      end
     end
   end
 
-  class Enum
-    include SAXMachine
+  class Enum < RSI::Node
+    attr_reader :name, :representation, :wrap
 
-    attribute :name
-    attribute :representation
+    def prepare
+      @name, @representation, @wrap = @node['name'], @node['representation'] || 'i32', @node['wrap'] == 'true'
 
-    elements :value, as: 'values', class: RSI::EnumValue
+      self.create_children(value: RSI::EnumValue)
 
-    ancestor :module
-
-    def crate
-      self.module.crate
+      self.context.register_type(self.qualified_name, RSI::Type::Enum.new(self.fully_qualified_name))
     end
 
-    def last_value
-      @last_value ||= -1
+    def qualified_name
+      "#{self.path}::#{self.name}"
     end
 
-    def last_value=(value)
-      @last_value = value
+    def wrap?
+      self.wrap == true
     end
 
-    def next_value
-      self.last_value + 1
+    def fully_qualified_name
+      if self.wrap?
+        "#{self.path}::#{self.name.underscore}::#{self.name}"
+      else
+        "#{self.path}::#{self.name}"
+      end
     end
 
-    def representation
-      @representation || 'i32'
+    def values
+      self.children.select { |x| RSI::EnumValue === x }
     end
 
-    def print_code(indent)
-      self.crate.print("#[repr(#{self.representation})]", indent)
-      self.crate.print("pub enum #{self.name} {", indent)
-      self.values.each { |v| v.print_code(indent + 1) }
-      self.crate.print("}", indent)
+    def to_code(indent = 0)
+      if self.wrap
+        self.render('enum-wrap', indent)
+      else
+        self.render('enum', indent)
+      end
+    end
+
+    def inspect
+      "Enum { name: #{self.name}, representation: #{self.representation} }"
     end
   end
 end

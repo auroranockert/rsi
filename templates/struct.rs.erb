@@ -1,0 +1,21 @@
+pub struct <%= self.name %> {
+<% if self.opaque? -%>
+  opaque: *mut std::libc::c_void
+<% else -%>
+<%= self.fields.map { |f| "  #{f.name}: #{f.type.as_struct_field(f.path)}" }.join(",\n") %>
+<% end -%>
+}<% if self.functions.length > 0 -%>
+
+
+impl <%= self.name %> {
+<%= self.functions.map { |fn| fn.to_code }.map { |fn| "  pub #{fn}" }.join("\n\n") %>
+}
+
+extern {
+<%= self.functions.map { |fn| fn.to_extern }.join("\n") %>
+}<% end -%>
+<% if self.implementations.length > 0 -%>
+
+
+<%= self.implementations.map { |im| im.to_code }.join("\n\n") %>
+<% end -%>

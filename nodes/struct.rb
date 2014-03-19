@@ -1,51 +1,86 @@
 module RSI
-  class StructField
-    include SAXMachine
+  class Implementation < RSI::Node
+    attr_reader :trait
 
-    attribute :name
-    attribute :type
+    def prepare(trait = nil)
+      @trait = trait || @node['trait']
 
-    ancestor :struct
-
-    def crate
-      self.struct.crate
+      self.create_children(fn: RSI::Function, method: RSI::Function, constructor: RSI::Function)
     end
 
-    def type
-      self.crate.type_from_string(@type) if @type
+    def functions
+      self.children.select { |x| RSI::Function === x }
     end
 
-    def last?
-      self.struct.fields.last == self
+    def qualified_name
+      self.parent.qualified_name
     end
 
-    def print_code(indent)
-      self.crate.print("#{self.name}: #{self.type}#{self.last? ? '' : ','}", indent)
+    def to_code(indent = 0)
+      self.render('implementation', indent)
     end
   end
 
-  class Struct
-    include SAXMachine
+  class StructField < RSI::Node
+    attr_reader :name
 
-    attribute :name
-    attribute :opaque
-
-    elements :field, as: 'fields', class: RSI::StructField
-
-    ancestor :module
-    
-    def crate
-      self.module.crate
+    def prepare(name = nil, type = nil)
+      @name = name || @node.try(:[], 'name')
+      @type, @type_name = type, @node.try(:[], 'type')
     end
 
-    def print_code(indent)
-      self.crate.print("pub struct #{self.name} {", indent)
-      if self.opaque
-        self.crate.print("opaque: *mut std::libc::c_void", indent + 1)
+    def type
+      if @type
+        @type
+      elsif @type_name
+        if t = self.context.lookup_type(@type_name, self)
+          t
+        else
+          raise "Could not resolve type #{@type_name} for field #{self.name} of #{self.parent.name}"
+        end
       else
-        self.fields.each { |f| f.print_code(indent + 1) }
+        raise "Could not resolve type for field #{self.name} of #{self.parent.name}"
       end
-      self.crate.print("}", indent)
+    end
+  end
+
+  class Struct < RSI::Node
+    attr_reader :name, :prefix
+
+    def prepare
+      @name, @opaque, @prefix = @node['name'], @node['opaque'] == 'true', @node['prefix']
+
+      self.context.register_type(self.qualified_name, RSI::Type::Struct.new(self.qualified_name, self.opaque?))
+
+      self.create_children(field: RSI::StructField, fn: RSI::Function, method: RSI::Function, constructor: RSI::Function, implementation: RSI::Implementation)
+    end
+
+    def qualified_name
+      "#{self.path}::#{self.name}"
+    end
+
+    def opaque?
+      @opaque
+    end
+
+    def fields
+      self.children.select { |x| RSI::StructField === x }
+    end
+
+    def functions
+      self.children.select { |x| RSI::Function === x }
+    end
+
+    def implementations
+      self.children.select { |x| RSI::Implementation === x }
+    end
+
+    def to_code(indent = 0)
+      self.render('struct', indent)
+    end
+
+    def inspect
+      "Struct { name: #{self.name}, opaque: #{self.opaque?} }"
     end
   end
 end

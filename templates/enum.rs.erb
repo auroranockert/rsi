@@ -1,0 +1,4 @@
+#[repr(<%= self.representation %>)]
+pub enum <%= self.name %> {
+<%= self.values.map { |v| "  #{v.name} = #{v.value}" }.join(",\n") %>
+}
