@@ -50,7 +50,7 @@ module RSI
     def prepare
       @name, @opaque, @prefix = @node['name'], @node['opaque'] == 'true', @node['prefix']
 
-      self.context.register_type(self.qualified_name, RSI::Type::Struct.new(self.qualified_name, self.opaque?))
+      self.context.register_type(self.qualified_name, RSI::Type::Struct, self.qualified_name, self.opaque?)
 
       self.create_children(field: RSI::StructField, fn: RSI::Function, method: RSI::Function, constructor: RSI::Function, implementation: RSI::Implementation)
     end

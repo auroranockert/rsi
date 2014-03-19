@@ -5,16 +5,16 @@ module RSI::Type
         'bool' => 'bool',
         'string' => 'str'
       }.map do |k, v|
-        context.register_type("rust:#{k}", RustScalar.new(v))
+        context.register_type("rust:#{k}", RustScalar, v)
       end
     end
 
-    def initialize(ty)
-      @path = ty
+    def prepare(ty)
+      self.path = ty
     end
     
     def inspect
-      "Rust { rust: #{@path} }"
+      "Rust { rust: #{self.path} }"
     end
   end
 end

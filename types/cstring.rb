@@ -1,7 +1,7 @@
 module RSI::Type
   class CString < RSI::Type::Type
     def self.register_types(context)
-      context.register_type("c:string", CString.new)
+      context.register_type("c:string", CString)
     end
 
     def path
@@ -16,11 +16,11 @@ module RSI::Type
       true
     end
 
-    def as_foreign_argument_prototype(arg)
+    def as_foreign_argument_prototype
       '*i8'
     end
 
-    def as_foreign_argument(arg)
+    def as_foreign_argument
       "#{super}.to_c_str().unwrap()" # TODO: Error check?
     end
 

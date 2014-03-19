@@ -5,7 +5,7 @@ module RSI
     def prepare
       @name, @in, @out, @template = @node['name'], @node['in'], @node['out'], @node['template']
 
-      self.context.register_type(@name, RSI::Type::Custom.new(self))
+      self.context.register_type(@name, RSI::Type::Custom, self)
     end
 
     def to_code

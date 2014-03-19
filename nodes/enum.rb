@@ -25,7 +25,7 @@ module RSI
 
       self.create_children(value: RSI::EnumValue)
 
-      self.context.register_type(self.qualified_name, RSI::Type::Enum.new(self.fully_qualified_name))
+      self.context.register_type(self.qualified_name, RSI::Type::Enum, self.fully_qualified_name)
     end
 
     def qualified_name

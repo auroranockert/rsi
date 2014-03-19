@@ -22,16 +22,16 @@ module RSI::Type
       nil
     end
 
-    def as_foreign_argument_prototype(arg)
-      self.element.as_foreign_argument_prototype(arg)
+    def as_foreign_argument_prototype
+      self.element.as_foreign_argument_prototype
     end
 
-    def as_foreign_argument(arg)
-      "#{arg.name}.len() as #{self.element.as_foreign_argument_prototype(arg)}"
+    def as_foreign_argument
+      "#{self.parent.name}.len() as #{self.element.as_foreign_argument_prototype}"
     end
 
-    def as_foreign_result_prototype(relative)
-      self.element.as_foreign_result_prototype(relative)
+    def as_foreign_result_prototype
+      self.element.as_foreign_result_prototype
     end
 
     def inspect

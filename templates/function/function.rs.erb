@@ -1,14 +1,14 @@
-fn <%= self.name %>(<%= self.arguments.map { |a| a.to_native_prototype }.compact.join(', ') %>)<%= self.render('function/native-prototype/results') %> {
+fn <%= self.name %>(<%= self.children.map { |a| a.to_native_prototype }.compact.join(', ') %>)<%= self.render('function/native-prototype/results') %> {
   unsafe {
-<%= self.children.map { |c| c.uses }.flatten.map { |p| "use #{p};\n".indent(2) }.join -%>
+<%= self.children.map { |c| c.uses }.select { |u| u }.flatten.map { |p| "use #{p};\n".indent(2) }.join -%>
 <%= self.children.map { |c| c.prelude }.compact.map { |p| "#{p}\n".indent(2) }.join -%>
     <%= (n = self.children.find { |x| x.try(:foreign_result) }) ? "let #{n.foreign_result} = " : '' %><%= self.foreign %>(<%= self.children.map { |c| c.to_foreign_argument }.compact.join(", ") %>);
-<% case self.results.length
+<% case (r = self.children.map { |c| c.to_native_result }.compact).count
    when 0 -%>
 <% when 1 -%>
-    return <%= self.results[0].to_native_result %>;
+    return <%= r[0] %>;
 <% else -%>
-    return (<%= self.results.map { |r| r.to_native_result }.join(', ') %>);
+    return (<%= r.join(', ') %>);
 <% end -%>
   }
 }

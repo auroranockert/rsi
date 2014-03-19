@@ -55,33 +55,36 @@ module RSI
 
   module Type
     class Type
-      attr_reader :path
+      attr_accessor :path, :parent
 
-      def uses
-        []
+      def initialize(parent)
+        @parent = parent
       end
 
-      def as_struct_field(relative)
-        self.lookup_relative(relative)
+      def prepare
       end
 
-      def as_native_result_prototype(relative)
-        self.lookup_relative(relative)
+      def as_struct_field
+        self.lookup_relative(self.parent.path)
       end
 
-      def as_native_result(name, relative)
-        "#{name}"
+      def as_native_result_prototype
+        self.lookup_relative(self.parent.path)
       end
 
-      def as_native_argument_prototype(relative)
-        self.lookup_relative(relative)
+      def as_native_result
+        "#{self.parent.name}"
       end
 
-      def as_foreign_argument_prototype(arg)
-        t = self.lookup_relative(arg.path)
+      def as_native_argument_prototype
+        self.lookup_relative(self.parent.path)
+      end
+
+      def as_foreign_argument_prototype
+        t = self.lookup_relative(self.parent.path)
 
         if self.pass_by_ref?
-          if arg.immutable?
+          if self.parent.immutable?
             "*#{t}"
           else
             "*mut #{t}"
@@ -91,16 +94,16 @@ module RSI
         end
       end
 
-      def as_foreign_argument(arg)
-        arg.name
+      def as_foreign_argument
+        self.parent.name
       end
 
-      def as_foreign_out_argument(name)
-        "#{name}"
+      def as_foreign_out_argument
+        self.parent.name
       end
 
-      def as_foreign_result_prototype(relative)
-        self.lookup_relative(relative)
+      def as_foreign_result_prototype
+        self.lookup_relative(self.parent.path)
       end
 
       def pass_by_ref?
@@ -185,23 +188,25 @@ module RSI
       self.children.select { |c| RSI::Module === c }
     end
 
-    def register_type(name, type)
-      self.types[name] = type
+    def register_type(name, type, *args)
+      self.types[name] = { klass: type, args: args }
     end
 
     def lookup_type(name, parent)
-      case t = self.types[name]
-      when Class
-        t.new(parent)
+      if t = self.types[name]
+        t[:klass].new(parent).tap do |ty|
+          ty.prepare(*t[:args])
+        end
       else
-        t
+        raise "Could not resolve type-name #{name} for #{parent}"
       end
     end
 
     def to_code
-      output = self.render('rsi')
-      File.open("#{@output}/#{self.name}.rs", 'w+') do |f|
-        f.write(output)
+      self.render('rsi').tap do |output|
+        File.open("#{@output}/#{self.name}.rs", 'w+') do |f|
+          f.write(output)
+        end
       end
     end
   end
@@ -209,7 +214,9 @@ end
 
 class Object
   def try(method, *a, &b)
-    public_send(method, *a, &b) if self.respond_to?(method)
+    if self.respond_to?(method)
+      public_send(method, *a, &b)
+    end
   end
 
   def try_or(method, *a)
@@ -223,11 +230,7 @@ end
 
 class String
   def underscore
-    self.gsub(/::/, '/').
-    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-    gsub(/([a-z\d])([A-Z])/,'\1_\2').
-    tr("-", "_").
-    downcase
+    self.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
   end
 
   def indent(indent)
@@ -235,8 +238,7 @@ class String
   end
 end
 
-Dir.glob("#{Root}/types/**/*.rb").map { |f| require f }
-Dir.glob("#{Root}/nodes/{module,dependency,enum,struct,function,type}.rb").map { |f| require f }
+Dir.glob("#{Root}/*/**/*.rb").map { |f| require f }
 
 # $enable_tracing = false
 # $trace_out = open('trace.txt', 'w')

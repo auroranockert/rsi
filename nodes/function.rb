@@ -1,6 +1,6 @@
 module RSI
   class FunctionParameter < RSI::Node
-    attr_accessor :name, :type, :immutable
+    attr_accessor :name, :type, :type_name, :immutable
 
     def prepare(name = nil, type = nil)
       @name = name || @node.try(:[], 'name')
@@ -12,12 +12,8 @@ module RSI
     def type
       if @type
         @type
-      elsif @type_name
-        if t = self.context.lookup_type(@type_name, self)
-          t
-        else
-          raise "Could not resolve type #{@type_name} for argument #{self.name} of #{self.parent.name}"
-        end
+      elsif self.type_name
+        self.context.lookup_type(self.type_name, self)
       else
         raise "Could not resolve type for argument #{self.name} of #{self.parent.name}"
       end
@@ -30,6 +26,12 @@ module RSI
     def to_native_prototype
       self.type.try_or("#{self.prefix}_as_native_prototype") do
         self.try(:as_native_prototype)
+      end
+    end
+
+    def to_native_result_prototype
+      self.type.try_or("#{self.prefix}_as_native_result_prototype") do
+        self.try(:as_native_result_prototype)
       end
     end
 
@@ -103,8 +105,8 @@ module RSI
   end
 
   class FunctionSelf < FunctionParameter
-    def prepare(type = nil)
-      super('self', type)
+    def prepare
+      super('self')
     end
 
     def prefix
@@ -129,8 +131,8 @@ module RSI
   end
 
   class FunctionResult < FunctionParameter
-    def prepare(name = nil, type = nil)
-      super(name || 'foreign_result', type)
+    def prepare(name = nil)
+      super(name || 'foreign_result')
     end
 
     def prefix
@@ -139,6 +141,10 @@ module RSI
 
     def foreign_result
       self.name
+    end
+
+    def as_native_result_prototype
+      self.render('function/native-prototype-result/result')
     end
 
     def as_native_result
@@ -151,27 +157,27 @@ module RSI
   end
 
   class FunctionOut < FunctionParameter
-    def prepare(name = nil, type = nil)
-      super(name, type)
+    def prepare(name = nil)
+      super(name)
     end
 
     def prefix
       'out'
     end
 
-    def to_foreign_prototype
+    def as_foreign_prototype
       self.render('function/foreign-prototype/out')
     end
 
-    def to_foreign_argument
-      if self.type.respond_to? :out_as_foreign_argument
-        self.type.out_as_foreign_argument
-      else
-        self.render('function/foreign-call/out')
-      end
+    def as_foreign_argument
+      self.render('function/foreign-call/out')
     end
 
-    def to_native_result
+    def as_native_result_prototype
+      self.render('function/native-prototype-result/result')
+    end
+
+    def as_native_result
       self.render('function/native-result/out')
     end
 
@@ -185,67 +191,32 @@ module RSI
   end
 
   class Function < RSI::Node
-    attr_reader :name, :arguments, :results, :foreign
+    attr_reader :name, :foreign
 
     def prepare
       @name, @foreign, @extern = @node['name'], @node['foreign'] || (@parent.prefix + @node['name']), (@node['extern'] != 'false')
 
       self.create_children(arg: RSI::FunctionArgument, self: RSI::FunctionSelf, result: RSI::FunctionResult, out: RSI::FunctionOut)
 
-      case self.function_type
-      when :constructor
-        r = FunctionResult.new(self.context, self, nil, nil, self.context.lookup_type(parent.qualified_name, self))
-
-        self.children.unshift(r)
-      when :method
-        s = FunctionSelf.new(self.context, self, nil, self.context.lookup_type(parent.qualified_name, self))
-        s.immutable = (@node['immutable'] == 'true')
-
-        self.children.unshift(s)
-      end
-
-      @arguments = self.children.select do |x|
-        case x
-        when RSI::FunctionArgument, RSI::FunctionSelf
-          true
+      case self.node.name
+      when 'constructor'
+        p = FunctionResult.new(self.context, self, nil, nil).tap do |r|
+          r.type_name = self.parent.qualified_name
         end
-      end
 
-      @results = self.children.select do |x|
-        case x
-        when RSI::FunctionResult, RSI::FunctionOut
-          true
+        self.children.unshift(p)
+      when 'method'
+        p = FunctionSelf.new(self.context, self, nil).tap do |s|
+          s.type_name = self.parent.qualified_name
+          s.immutable = (@node['immutable'] == 'true')
         end
+
+        self.children.unshift(p)
       end
     end
 
     def extern?
       @extern
-    end
-
-    def function_type
-      case self.node.name
-      when 'method'
-        :method
-      when 'constructor'
-        :constructor
-      when 'fn'
-        :function
-      else
-        raise "Unknown function type #{self.node.name.inspect}"
-      end
-    end
-
-    def immutable_self?
-      @immutable_self || false
-    end
-
-    def method?
-      self.function_type == :method
-    end
-
-    def constructor?
-      self.function_type == :constructor
     end
 
     def to_code
@@ -257,7 +228,7 @@ module RSI
     end
 
     def inspect
-      "Function { name: #{self.name}, type: #{self.function_type}, arguments: #{self.arguments}, results: #{self.results} }"
+      "Function { name: #{self.name}, children: #{self.children} }"
     end
   end
 end

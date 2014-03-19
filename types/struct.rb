@@ -1,10 +1,8 @@
 module RSI::Type
   class Struct < RSI::Type::Type
-    def initialize(path, opaque)
+    def prepare(path, opaque)
       @path, @opaque = path, opaque
     end
-
-    attr_reader :path
 
     def name
       @path
@@ -18,7 +16,7 @@ module RSI::Type
       true
     end
 
-    def as_foreign_argument_prototype(arg)
+    def as_foreign_argument_prototype
       if self.opaque?
         '*mut std::libc::c_void'
       else
@@ -26,15 +24,15 @@ module RSI::Type
       end
     end
 
-    def as_foreign_argument(arg)
+    def as_foreign_argument
       if self.opaque?
-        "#{arg.name}.opaque"
+        "#{self.parent.name}.opaque"
       else
         super
       end
     end
 
-    def as_foreign_result_prototype(relative)
+    def as_foreign_result_prototype
       if self.opaque?
         "std::libc::c_void"
       else
@@ -42,9 +40,9 @@ module RSI::Type
       end
     end
 
-    def as_native_result(name, relative)
+    def as_native_result
       if self.opaque?
-        "#{self.lookup_relative(relative)} { opaque: #{name} as *mut std::libc::c_void }"
+        "#{self.lookup_relative(self.parent.path)} { opaque: #{self.parent.name} as *mut std::libc::c_void }"
       else
         super
       end

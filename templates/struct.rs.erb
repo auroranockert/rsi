@@ -2,7 +2,7 @@ pub struct <%= self.name %> {
 <% if self.opaque? -%>
   opaque: *mut std::libc::c_void
 <% else -%>
-<%= self.fields.map { |f| "  #{f.name}: #{f.type.as_struct_field(f.path)}" }.join(",\n") %>
+<%= self.fields.map { |f| "  #{f.name}: #{f.type.as_struct_field}" }.join(",\n") %>
 <% end -%>
 }<% if self.functions.length > 0 -%>
 

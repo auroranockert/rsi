@@ -1,10 +1,8 @@
 module RSI::Type
   class Enum < RSI::Type::Type
-    def initialize(path)
+    def prepare(path)
       @path = path
     end
-
-    attr_reader :path
 
     def inspect
       "Type::Enum { path: #{self.path} }"

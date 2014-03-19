@@ -1,4 +1,4 @@
-<% case self.results.length -%>
+<% case (r = self.children.map { |c| c.to_native_result_prototype }.compact).count -%>
 <% when 0 then -%>
-<% when 1 then %> -> <%= self.results[0].type.as_native_result_prototype(self.path) -%>
-<% else %> -> (<%= self.results.map { |r| r.type.as_native_result_prototype(self.path) }.join(', ') %>)<% end -%>
+<% when 1 then %> -> <%= r[0] -%>
+<% else %> -> (<%= r.join(', ') %>)<% end -%>

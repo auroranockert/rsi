@@ -24,12 +24,12 @@ module RSI::Type
         'ulonglong' => 'std::libc::c_ulonglong',
         'size_t' => 'std::libc::size_t'
       }.map do |k, v|
-        context.register_type("c:#{k}", CScalar.new(v))
+        context.register_type("c:#{k}", CScalar, v)
       end
     end
-
-    def initialize(ty)
-      @path = ty
+    
+    def prepare(ty)
+      self.path = ty
     end
 
     def inspect

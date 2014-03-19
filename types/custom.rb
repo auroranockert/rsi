@@ -1,37 +1,37 @@
 module RSI::Type
   class Custom < RSI::Type::Type
-    attr_reader :parent
+    attr_reader :definition
 
-    def initialize(parent)
-      @parent = parent
+    def prepare(definition)
+      @definition = definition
     end
 
     def out
-      @out ||= @parent.context.lookup_type(@parent.out, @parent)
+      @out ||= self.definition.context.lookup_type(self.definition.out, self.parent)
     end
 
     def path
       self.out.path
     end
 
-    def as_struct_field(relative)
-      self.out.as_struct_field(relative)
+    def as_struct_field
+      self.out.as_struct_field
     end
 
-    def as_native_result_prototype(relative)
-      self.out.as_native_result_prototype(relative)
+    def as_native_result_prototype
+      self.out.as_native_result_prototype
     end
 
-    def as_native_argument_prototype(relative)
-      self.out.as_native_argument_prototype(relative)
+    def as_native_argument_prototype
+      self.out.as_native_argument_prototype
     end
 
-    def as_foreign_argument(arg)
-      "#{arg.name}"
+    def as_foreign_argument
+      "#{self.parent.name}"
     end
 
     def inspect
-      "Type::Custom { parent: #{self.parent.name.inspect} }"
+      "Type::Custom { definition: #{self.definition.name.inspect} }"
     end
   end
 end

@@ -4,12 +4,6 @@ module RSI::Type
       context.register_type("rsi:vec", Vec)
     end
 
-    attr_reader :parent
-
-    def initialize(parent)
-      @parent = parent
-    end
-
     def out_uses
       ['std::num::Zero', 'std::vec::MutableVector']
     end
@@ -19,46 +13,46 @@ module RSI::Type
     end
 
     def element
-      @element ||= @parent.context.lookup_type(@parent.node['element'], @parent)
+      @element ||= self.parent.context.lookup_type(self.parent.node['element'], self.parent)
     end
 
     def out_prelude
-      @parent.render('function/prelude/vec-out')
+      self.parent.render('function/prelude/vec-out')
     end
     
     def out_as_foreign_argument
-      "#{@parent.name}.as_mut_ptr()"
+      "#{self.parent.name}.as_mut_ptr()"
     end
 
     def pass_by_ref?
       true
     end
 
-    def as_native_argument_prototype(relative)
-      "[#{self.lookup_relative(relative)}]"
+    def as_native_argument_prototype
+      "[#{self.lookup_relative(self.parent.path)}]"
     end
 
-    def as_native_result_prototype(relative)
-      "~[#{self.lookup_relative(relative)}]"
+    def as_native_result_prototype
+      "~[#{self.lookup_relative(self.parent.path)}]"
     end
 
-    def as_native_result(name, relative)
-      "#{name}"
+    def as_native_result
+      "#{self.parent.name}"
     end
 
-    def as_foreign_argument_prototype(arg)
-      if arg.immutable?
-        "*#{self.element.lookup_relative(arg.path)}"
+    def as_foreign_argument_prototype
+      if self.parent.immutable?
+        "*#{self.element.lookup_relative(self.parent.path)}"
       else
-        "*mut #{self.element.lookup_relative(arg.path)}"
+        "*mut #{self.element.lookup_relative(self.parent.path)}"
       end
     end
 
-    def as_foreign_argument(arg)
-      if arg.immutable?
-        "#{arg.name}.as_ptr()"
+    def as_foreign_argument
+      if self.parent.immutable?
+        "#{self.parent.name}.as_ptr()"
       else
-        "#{arg.name}.as_mut_ptr()"
+        "#{self.parent.name}.as_mut_ptr()"
       end
     end
 
